@@ -47,7 +47,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', 'password', '2023-11-07 19:51:03');
+INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', '2023-11-07 19:51:03');
 
 --
 -- Indexes for table `users`
