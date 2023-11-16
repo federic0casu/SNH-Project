@@ -6,7 +6,7 @@ services:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
       - MYSQL_DATABASE=book_shop_db
       - MYSQL_USER=book_shop
-      - MYSQL_PASSWORD=book_shop_password # this should live in a env var
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD} # this should live in a env var
     volumes:
       - "./../db:/docker-entrypoint-initdb.d" # this is how we persist a sql db even when container stops
   php-apache:
