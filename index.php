@@ -31,77 +31,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== 1) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Emporium - Your Source for Great Reads</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        body {
-            margin: 0;
-        }
-
-        header {
-            text-align: center;
-            margin: 0;
-            padding: 50px;
-            background-color: #333;
-            color: #fff;
-        }
-
-        header h1 {
-            font-size: 3em;
-        }
-
-        header p {
-            font-size: 1.2em;
-            margin-top: 15%;
-            margin-left: -7.5%;
-        }
-
-        .cart-icon {
-            font-size: 2em;
-            cursor: pointer;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .header-left,
-        .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .login-button {
-            margin-right: 10px;
-        }
-
-        .total-price {
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        #cart-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 10px;
-            max-width: 25%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
     <header class="header">
