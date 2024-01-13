@@ -1,26 +1,34 @@
 version: '3'
+
+
 services:
+  
   db: 
+    container_name: db
     image: mysql:latest
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MYSQL_ALLOW_EMPTY_PASSWORD=0
       - MYSQL_DATABASE=book_shop_db
       - MYSQL_USER=book_shop
       - MYSQL_PASSWORD=${MYSQL_PASSWORD} # this should live in a env var
     volumes:
       - "./../db:/docker-entrypoint-initdb.d" # this is how we persist a sql db even when container stops
-  php-apache:
+  
+  web:
+    container_name: web
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - "./../www:/var/www/bookshop" # sync the current dir on local machine to the dir of container
     depends_on:
       - db
-    volumes:
-      - "./../www:/var/www/html" # sync the current dir on local machine to the dir of container
     ports:
       - 80:80
-      - 443:443 # for future ssl traffic
+      - 443:443 # for ssl traffic
+  
   phpmyadmin:
+    container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin
     depends_on:
       - db
