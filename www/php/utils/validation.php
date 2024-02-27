@@ -23,4 +23,35 @@ function check_field_and_redirect_error($page_name, $fieldname){
     }
 }
 
+//Check that the supplied email address is a string and is in a
+//email address format.
+function is_valid_email_address($addr){
+    return is_string($addr) && filter_var($addr, FILTER_VALIDATE_EMAIL);
+}
+
+//Check if a password abides the rules. The functions returns an 
+//error string. If empty, the password passed all checks.
+function validate_password($pass){
+    if (strlen($pass) < 8 || strlen($pass) > 16) {
+        return "Password length should be between 8 characters and 16 characters";
+    }
+    if (!preg_match("/\d/", $pass)) {
+        return "Password should contain at least one digit";
+    }
+    if (!preg_match("/[A-Z]/", $pass)) {
+        return "Password should contain at least one Capital Letter";
+    }
+    if (!preg_match("/[a-z]/", $pass)) {
+        return "Password should contain at least one small Letter";
+    }
+    if (!preg_match("/\W/", $pass)) {
+        return "Password should contain at least one special character";
+    }
+    if (preg_match("/\s/", $pass)) {
+        return "Password should not contain any white space";
+    }
+
+    return "";
+}
+
 ?>
