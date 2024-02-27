@@ -12,6 +12,10 @@ function redirect_to_page($page_name, $query=NULL){
     }
     //Redirect to the computed url
     header("Location: ".$url);
+    //Close connection to db if it was open, then exit
+    if(isset($conn)){
+        $conn->close();
+    }
     die();
 }
 
