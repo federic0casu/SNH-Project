@@ -3,7 +3,7 @@
 //Redirect to the specified page.
 //The query param is optional, and if used must be supplied
 //after being urlencoded.
-function redirect_to_page($page_name, $query=NULL){
+function redirect_to_page(string $page_name, string $query=NULL) : void{
     //Build url to the page directory
     $url = "../../pages/".$page_name.'.html';
     //If query was submitted, append it to the url
@@ -21,7 +21,7 @@ function redirect_to_page($page_name, $query=NULL){
 
 //Used as a wrapper to redirect_to_page whenever an error
 //query is needed
-function redirect_with_error($page_name, $error_message){
+function redirect_with_error(string $page_name, string $error_message) : void{
     //Urlencode the error message, and call the redirect function
     redirect_to_page($page_name, "error=".urlencode($error_message));
 }
