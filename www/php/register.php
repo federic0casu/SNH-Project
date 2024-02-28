@@ -32,7 +32,7 @@ if(!is_valid_email_address($_POST["email"])){
 }
 
 //Check that the password has the correct format
-$pass_error = validate_password($_POST["password"])
+$pass_error = check_valid_password($_POST["password"]);
 if(!empty($pass_error)){
     redirect_with_error("register", $pass_error);
 }

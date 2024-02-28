@@ -32,9 +32,9 @@ function is_valid_email_address($addr){
     return is_string($addr) && filter_var($addr, FILTER_VALIDATE_EMAIL);
 }
 
-//Check if a password abides the rules. The functions returns an 
+//Check if a password abides the rules. The function returns an 
 //error string. If empty, the password passed all checks.
-function validate_password($pass){
+function check_valid_password($pass){
     if (strlen($pass) < 8 || strlen($pass) > 16) {
         return "Password length should be between 8 characters and 16 characters";
     }
