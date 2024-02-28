@@ -37,4 +37,15 @@ if(!empty($pass_error)){
     redirect_with_error("register", $pass_error);
 }
 
+//Check that passwords match
+if($_POST["password"] !== $_POST["confirm_password"]){
+    redirect_with_error("register", "Passwords do not match");
+}
+
+//Check password strength
+$pass_strength_warning = check_password_strength($_POST["password"], $_POST);
+if(!empty($pass_strength_warning)){
+    redirect_with_error("register", $pass_strength_warning);
+}
+
 ?>

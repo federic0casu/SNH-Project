@@ -1,6 +1,9 @@
 <?php
 // Include the navigation util
 include_once 'navigation.php';
+// Include the zxcvbn and the composer loader
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+use ZxcvbnPhp\Zxcvbn;
 
 //Check if a specified form field has been supplied
 //and is not empty in the POST array.
@@ -39,10 +42,10 @@ function validate_password($pass){
         return "Password should contain at least one digit";
     }
     if (!preg_match("/[A-Z]/", $pass)) {
-        return "Password should contain at least one Capital Letter";
+        return "Password should contain at least one uppercase character";
     }
     if (!preg_match("/[a-z]/", $pass)) {
-        return "Password should contain at least one small Letter";
+        return "Password should contain at least one lowercase character";
     }
     if (!preg_match("/\W/", $pass)) {
         return "Password should contain at least one special character";
@@ -51,6 +54,25 @@ function validate_password($pass){
         return "Password should not contain any white space";
     }
 
+    return "";
+}
+
+//Check the password strength. Returns a warning string if
+//the password is too weak, otherwise an empty string.
+function check_password_strength($pass, $user_data){
+    //Remove passwords from user supplied data
+    unset($user_data["password"]);
+    unset($user_data["confirm_password"]);
+    //Convert to array
+    $user_data = array_values($user_data);
+    //Check password strength
+    $zxcvbn = new Zxcvbn();
+    $strength = $zxcvbn->passwordStrength($pass, $user_data);
+    //If password is weak, return the issue feedback
+    if($strength["score"] <= 2){
+        return $strength['feedback']['warning'];
+    }
+    //Password is sufficiently strong
     return "";
 }
 
