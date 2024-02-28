@@ -34,7 +34,6 @@ function updateResults(response) {
                 <img src="${book.image}" alt="${book.title}">
                 <h3>${book.title}</h3>
                 <p>Author: ${book.author}</p>
-                <p>Price: \$${book.price}</p>
                 <button>Add to Cart</button>
             `);
 
