@@ -30,8 +30,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== 1) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Emporium - Your Source for Great Reads</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
     <header class="header">
@@ -41,26 +41,19 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== 1) {
         </div>
         <div class="header-right">
             <button class="login-button" onclick="location.href='pages/login.html';">Login</button> 
-            <button class="login-button" onclick="location.href='pages/register.html';">Register</button> 
-            <button class="cart-icon" onclick="showCart()">🛒</button>
+            <button class="register-button" onclick="location.href='pages/register.html';">Register</button> 
+            <button class="cart-button" onclick="showCart()">Cart</button>
         </div>
     </header>
 
     <div id="cart-container">
         <div class="close-button" onclick="showCart()">X</div>
         <div class="cart-item">
-            <img src="path_to_image.jpg" alt="Book Title">
             <div>
                 <h3>Book Title</h3>
                 <p>Author: Author Name</p>
-                <p>Price: $XX.YY</p>
             </div>
         </div>
-
-        <div class="total-price">
-            Total: $ZZ.ZZ
-        </div>
-
         <button class="checkout-button">Proceed to Checkout</button>
     </div>
     <script>
@@ -81,7 +74,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== 1) {
                 <img src="<?php echo $book['image_url_L']; ?>" alt="<?php echo $book['book_title']; ?>">
                 <h3><?php echo $book['book_title']; ?></h3>
                 <p>Author: <?php echo $book['book_author']; ?></p>
-                <p>Price: $XX.YY</p>
                 <button>Add to Cart</button>
             </div>
         <?php endforeach; ?>

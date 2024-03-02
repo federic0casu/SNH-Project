@@ -20,11 +20,6 @@ header p {
     margin-left: -7.5%;
 }
 
-.cart-icon {
-    font-size: 2em;
-    cursor: pointer;
-}
-
 .close-button {
     position: absolute;
     top: 10px;
@@ -46,13 +41,10 @@ header p {
     align-items: center;
 }
 
-.login-button {
+.login-button,
+.register-button,
+.cart-button {
     margin-right: 10px;
-}
-
-.total-price {
-    font-weight: bold;
-    margin-top: 10px;
 }
 
 #cart-container {

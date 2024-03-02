@@ -1,1 +1,2 @@
 docker/.env
+docker/apache-conf/*.pem
