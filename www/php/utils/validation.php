@@ -17,13 +17,31 @@ function check_field_presence(string $fieldname) : bool{
 //Check if a specified form field has been supplied
 //and is not empty in the POST array. If it is,
 //redirect to the specified page with an error message.
-function check_field_and_redirect_error(string $page_name,string $fieldname) : void{
+function check_field_and_redirect_error(string $page_name, string $fieldname) : bool{
     //Check if a field is filled. If it isn't, redirect to the
     //specified page with an error message.
     if(!check_field_presence($fieldname)){
         $error_message = "Missing ".str_replace("_", " ", $fieldname)." field";
         redirect_with_error($page_name, $error_message);
+        return false;
     }
+    //Check that the supplied field is a string
+    if(!is_string($fieldname)){
+        $error_message = str_replace("_", " ", $fieldname)." field must be a string";
+        redirect_with_error($page_name, $error_message);
+        return false;
+    } 
+    return true;
+}
+
+//Wrapper for check_field_and_redirect_error over an array
+function check_post_field_array(string $page_name, array $post_fields_array) : bool{
+    foreach($post_fields_array as $fieldname){
+        if(!check_field_and_redirect_error($page_name, $fieldname)){
+            return false;
+        }
+    }
+    return true;
 }
 
 //Check that the supplied email address is a string and is in a
