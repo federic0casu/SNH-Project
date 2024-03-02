@@ -12,19 +12,8 @@ include_once 'utils/validation.php';
 //Should we filter data passed form the user?
 //TODO
 
-//Check that all needed data was supplied
-check_field_and_redirect_error("register", "first_name");
-check_field_and_redirect_error("register", "last_name");
-check_field_and_redirect_error("register", "username");
-check_field_and_redirect_error("register", "email");
-check_field_and_redirect_error("register", "password");
-check_field_and_redirect_error("register", "confirm_password");
-
-//Check that every form field is a string type
-if(!is_string($_POST["first_name"])||!is_string($_POST["last_name"])||!is_string($_POST["username"])||
-   !is_string($_POST["email"])||!is_string($_POST["password"])||!is_string($_POST["confirm_password"])){
-    redirect_with_error("register", "One or more fields are not strings");
-}
+//Check that all needed data was supplied and is a string
+check_post_field_array("register", ["first_name", "last_name", "username", "email", "password", "confirm_password"]);
 
 //Check that the email has the correct format
 if(!is_valid_email_address($_POST["email"])){
