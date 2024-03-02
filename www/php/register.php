@@ -9,9 +9,6 @@ include_once 'utils/validation.php';
 //Check that the user isn't already logged in
 //TODO
 
-//Should we filter data passed form the user?
-//TODO
-
 //Check that all needed data was supplied and is a string
 check_post_field_array("register", ["first_name", "last_name", "username", "email", "password", "confirm_password"]);
 
@@ -44,6 +41,7 @@ $db = DBManager::get_instance();
 $query = "SELECT * FROM `users` WHERE `username` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
 if(count($query_rows) > 0){
+    //TODO: log this
     redirect_with_error("register", "Username already taken");
 }
 
@@ -51,7 +49,24 @@ if(count($query_rows) > 0){
 $query = "SELECT * FROM `users` WHERE `email` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["email"]], "s");
 if(count($query_rows) > 0){
+    //TODO: log this
     redirect_with_error("register", "Email already in use");
 }
+
+//TODO: Send verification mail (as a util)
+//$verification_token = send_verification_mail($_POST["email"]);
+
+//TODO: Remove later once mail verification has been implemented
+$verification_token = bin2hex(random_bytes(32));
+
+//Insert user into the database
+$query = "INSERT INTO `users` (`username`,`first_name`,`last_name`,`email`,`password`,`is_verified`,`verif_token`) VALUES".
+         "(?, ?, ?, ?, ?, ?, ?)";
+$query_result = $db->exec_query("INSERT", $query, [$_POST["username"],$_POST["first_name"],$_POST["last_name"],
+                                                   $_POST["email"],password_hash($_POST["password"], PASSWORD_DEFAULT),
+                                                   0,$verification_token], "sssssis");
+
+//At this point the registration is done, redirect to the login
+redirect_to_page("login");
 
 ?>
