@@ -45,6 +45,7 @@ class DBManager{
         return self::$instance;
     }
 
+    //Execute a specified prepared statement query
     function exec_query(string $query_type, string $query, 
                         array $parameters = [], string $param_types = ""){
 
