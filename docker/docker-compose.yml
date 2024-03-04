@@ -26,7 +26,7 @@ services:
       - MYSQL_USER=book_shop
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - "./../www:/var/www/html" # sync the current dir on local machine to the dir of container
+      - "./../www:/var/www/bookshop" # sync the current dir on local machine to the dir of container
     ports:
       - 80:80
       - 443:443 # for ssl traffic
