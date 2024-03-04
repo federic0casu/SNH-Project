@@ -1,8 +1,8 @@
 start:
-	systemctl --user start docker-desktop.service
+	systemctl start docker
 
 stop:
-	systemctl --user stop docker-desktop.service
+	systemctl stop docker
 
 up:
 	docker compose -f docker-compose.yml up --force-recreate --remove-orphans --build

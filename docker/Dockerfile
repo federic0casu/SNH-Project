@@ -14,8 +14,8 @@ RUN docker-php-ext-enable mysqli pdo_mysql
 RUN service apache2 start && service apache2 status
 
 # Copy SSL certificate, key files, and Apache conf
-COPY apache-conf/localhost+1.pem /etc/ssl/certs/certificate.crt
-COPY apache-conf/localhost+1-key.pem /etc/ssl/private/server.key
+COPY apache-conf/localhost.pem /etc/ssl/certs/certificate.crt
+COPY apache-conf/localhost-key.pem /etc/ssl/private/server.key
 COPY apache-conf/bookshop.conf /etc/apache2/sites-available/bookshop.conf
 
 RUN a2ensite bookshop.conf
