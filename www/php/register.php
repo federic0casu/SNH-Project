@@ -60,11 +60,12 @@ if(count($query_rows) > 0){
 $verification_token = bin2hex(random_bytes(32));
 
 //Insert user into the database
-$query = "INSERT INTO `users` (`username`,`first_name`,`last_name`,`email`,`password`,`is_verified`,`verif_token`) VALUES".
-         "(?, ?, ?, ?, ?, ?, ?)";
+$query = "INSERT INTO `users` (`username`,`first_name`,`last_name`,`email`,`password`,`is_verified`,".
+                      "`verif_token`, `is_locked`, `failed_attempts`) VALUES".
+         "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $query_result = $db->exec_query("INSERT", $query, [$_POST["username"],$_POST["first_name"],$_POST["last_name"],
                                                    $_POST["email"],password_hash($_POST["password"], PASSWORD_DEFAULT),
-                                                   0,$verification_token], "sssssis");
+                                                   0,$verification_token,0,0], "sssssisii");
 
 //At this point the registration is done, redirect to the login
 redirect_to_page("login");

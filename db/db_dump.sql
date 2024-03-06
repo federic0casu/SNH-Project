@@ -42,6 +42,8 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `is_verified` int NOT NULL,
   `verif_token` varchar(255),
+  `is_locked` int NOT NULL,
+  `failed_attempts` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -49,7 +51,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 0, NULL, '2023-11-07 19:51:03');
+INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `is_locked`, `failed_attempts`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, 0, 0, '2023-11-07 19:51:03');
 
 --
 -- Indexes for table `users`
