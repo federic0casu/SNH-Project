@@ -43,7 +43,6 @@ CREATE TABLE `users` (
   `is_verified` int NOT NULL,
   `verif_token` varchar(255),
   `is_locked` int NOT NULL,
-  `failed_attempts` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -51,7 +50,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `is_locked`, `failed_attempts`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, 0, 0, '2023-11-07 19:51:03');
+INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, '2023-11-07 19:51:03');
 
 --
 -- Indexes for table `users`
@@ -64,6 +63,36 @@ ALTER TABLE `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+
+--
+-- Table structure for table `wrong_login`
+--
+
+CREATE TABLE `wrong_login` (
+  `id` int NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Indexes for table `wrong_login`
+--
+ALTER TABLE `wrong_login`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `wrong_login`
+--
+ALTER TABLE `wrong_login`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Foreign keys for table `wrong_login`
+--
+ALTER TABLE `wrong_login`
+  ADD CONSTRAINT `FK_username`
+  FOREIGN KEY (`username`) REFERENCES `users`(`username`);
 
 
 --
