@@ -1,26 +1,11 @@
 <?php
-include 'php/db_connect.php';
+include 'php/utils/db_manager.php';
 
-$sql = "SELECT * FROM books ORDER BY RAND() LIMIT 4";
-$result = $conn->query($sql);
+//Show a sample of random books
+$db = DBManager::get_instance();
+$query = "SELECT * FROM books ORDER BY RAND() LIMIT 4";
+$books = $db->exec_query("SELECT", $query);
 
-$books = array();
-
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $books[] = $row;
-    }
-}
-
-$conn->close();
-
-/*
-session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== 1) {
-    header("Location: ../index.html?bad_attempt=true");
-    exit();
-}
-*/
 ?>
 
 
@@ -40,8 +25,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== 1) {
             <p>Your Source for Great Reads</p>
         </div>
         <div class="header-right">
-            <button class="login-button" onclick="location.href='pages/login.html';">Login</button> 
-            <button class="register-button" onclick="location.href='pages/register.html';">Register</button> 
+            <button class="login-button" onclick="location.href='pages/login.php';">Login</button> 
+            <button class="register-button" onclick="location.href='pages/register.php';">Register</button> 
             <button class="cart-button" onclick="showCart()">Cart</button>
         </div>
     </header>
