@@ -1,13 +1,11 @@
 <?php
-// Include the database connection
-include_once 'utils/db_manager.php';
-// Include the navigation util
-include_once 'utils/navigation.php';
-// Include the validation util
-include_once 'utils/validation.php';
+include_once 'utils/config_and_import.php';
 
 //Check that the user isn't already logged in
-//TODO
+$user_id = get_logged_user_id();
+if($user_id > 0){
+    redirect_to_index();
+}
 
 //Check that all needed data was supplied and is a string
 check_post_field_array("register", ["first_name", "last_name", "username", "email", "password", "confirm_password"]);
