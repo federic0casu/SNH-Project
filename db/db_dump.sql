@@ -12,6 +12,7 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 -- Create the database
+DROP DATABASE IF EXISTS book_shop_db;
 CREATE DATABASE IF NOT EXISTS book_shop_db;
 
 -- Use the database
@@ -42,7 +43,6 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `is_verified` int NOT NULL,
   `verif_token` varchar(255),
-  `is_locked` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -56,7 +56,9 @@ INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `pass
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`,`username`);
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `users`
+  ADD UNIQUE (`username`);
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -71,7 +73,7 @@ ALTER TABLE `users`
 
 CREATE TABLE `wrong_login` (
   `id` int NOT NULL,
-  `username` varchar(50) NOT NULL,
+  `user_id` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -85,14 +87,47 @@ ALTER TABLE `wrong_login`
 -- AUTO_INCREMENT for table `wrong_login`
 --
 ALTER TABLE `wrong_login`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Foreign keys for table `wrong_login`
 --
 ALTER TABLE `wrong_login`
-  ADD CONSTRAINT `FK_username`
-  FOREIGN KEY (`username`) REFERENCES `users`(`username`);
+  ADD CONSTRAINT `FK_wrong_login_id`
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+
+
+--
+-- Table structure for table `logged_users`
+--
+
+CREATE TABLE `logged_users` (
+  `id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `session_token` varchar(255) NOT NULL,
+  `valid_until` timestamp NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Indexes for table `logged_users`
+--
+ALTER TABLE `logged_users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `logged_users`
+--
+ALTER TABLE `logged_users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- Foreign keys for table `logged_users`
+--
+ALTER TABLE `logged_users`
+  ADD CONSTRAINT `FK_logged_users_username`
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+
 
 
 --
