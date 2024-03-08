@@ -1,3 +1,13 @@
+<?php
+include_once "../php/utils/config_and_import.php";
+
+//Check that the user isn't already logged in
+$user_id = get_logged_user_id();
+if($user_id > 0){
+    redirect_to_index();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +43,7 @@
 
             <input type="submit" value="Register">
         </form>
-        <p>Already have an account? <a href="login.html">Login here</a>.</p>
+        <p>Already have an account? <a href="login.php">Login here</a>.</p>
     </div>
     <script>
         const queryString = window.location.search;

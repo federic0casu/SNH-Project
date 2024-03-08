@@ -5,7 +5,7 @@
 //after being urlencoded.
 function redirect_to_page(string $page_name, string $query=NULL) : void{
     //Build url to the page directory
-    $url = "/pages/".$page_name.'.html';
+    $url = "/pages/".$page_name.'.php';
     //If query was submitted, append it to the url
     if(!is_null($query)){
         $url = $url.'?'.$query;
