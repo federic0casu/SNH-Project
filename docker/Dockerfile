@@ -1,5 +1,9 @@
 FROM php:apache
 
+# Copy files
+WORKDIR /var/www/bookshop
+COPY /www/ /var/www/bookshop/
+
 # To enable Apache's mod_rewrite module
 RUN a2enmod rewrite
 
@@ -14,9 +18,9 @@ RUN docker-php-ext-enable mysqli pdo_mysql
 RUN service apache2 start && service apache2 status
 
 # Copy SSL certificate, key files, and Apache conf
-COPY apache-conf/localhost.pem /etc/ssl/certs/certificate.crt
-COPY apache-conf/localhost-key.pem /etc/ssl/private/server.key
-COPY apache-conf/bookshop.conf /etc/apache2/sites-available/bookshop.conf
+COPY docker/apache-conf/localhost.pem /etc/ssl/certs/certificate.crt
+COPY docker/apache-conf/localhost-key.pem /etc/ssl/private/server.key
+COPY docker/apache-conf/bookshop.conf /etc/apache2/sites-available/bookshop.conf
 
 RUN a2ensite bookshop.conf
 
@@ -34,7 +38,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN apt-get -y install git && apt-get -y install unzip
 
 # Install zxcvbn
-WORKDIR /var/www/html/
+RUN composer install
 RUN composer require bjeavons/zxcvbn-php
 RUN composer update
 
