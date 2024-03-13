@@ -45,30 +45,30 @@ $query = "SELECT * FROM `users` WHERE `username` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
 if(count($query_rows) == 0){
     $logger->warning('[LOGIN] Username does not exist.', ['username' => $_POST["username"]]);
-    redirect_with_error("login", "Username does not exist");
+    redirect_with_error("login", "Something went wrong: Invalid username or password.");
 }
 
 // Get user data from query result
 $user = $query_rows[0];
 
-//Check if the user is timed-out
+// Check if the user is timed-out
 $query = "SELECT * FROM `wrong_login` WHERE `user_id` = ? AND `created_at` > DATE_SUB(NOW(), INTERVAL 1 MINUTE)";
 $query_rows = $db->exec_query("SELECT", $query, [$user["id"]], "i");
 if(count($query_rows) >= $lockout_threshold){
-    //TODO: SECURITY log this
+    $logger->warning('[LOGIN] Too many recently failed login attempts.', ['username' => $_POST["username"]]);
     redirect_with_error("login", "Too many recently failed login attempts. Retry after a while.");
 }
 
-//Check if the user is verified
+// Check if the user is verified
 if($user["is_verified"] == 0){
     redirect_with_error("login", "User is not verified. Check your mail for the verification link.");
 }
 
-//Check the password
+// Check the password
 if(!password_verify($_POST["password"], $user["password"])){
     //TODO: SECURITY log this
 
-    //Log wrong login attempt
+    // Log wrong login attempt
     $query = "INSERT INTO `wrong_login` (`user_id`) VALUES (?)";
     $query_result = $db->exec_query("INSERT", $query, [$user["id"]], "i");
 
@@ -76,17 +76,17 @@ if(!password_verify($_POST["password"], $user["password"])){
     redirect_with_error("login", "Password is not correct.");
 }
 
-//If we arrived here, all checks have succeeded
-//Generate the user login session cookie
+// If we arrived here, all checks have succeeded
+// Generate the user login session cookie
 $session_token = bin2hex(random_bytes(32));
 $query = "INSERT INTO `logged_users` (`user_id`, `session_token`, `valid_until`) VALUES ".
          "(?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))";
 $query_result = $db->exec_query("INSERT", $query, [$user["id"],$session_token], "is");
 
-//Save the cookie
+// Save the cookie
 setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true, true);
 
-//Redirect to home
+// Redirect to home
 redirect_to_index();
 
 ?>

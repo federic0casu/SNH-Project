@@ -7,6 +7,9 @@ stop:
 up:
 	docker compose -f docker-compose.yml up -d --force-recreate --remove-orphans --build
 
+no-recreate:
+	docker compose -f docker-compose.yml up -d --remove-orphans --build
+
 prune:
 	docker system prune -a --volumes
 

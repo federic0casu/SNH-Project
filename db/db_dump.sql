@@ -124,6 +124,18 @@ ALTER TABLE `logged_users`
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
 
+--
+-- Table structure for table `log_messages`
+--
+
+CREATE TABLE log_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    level INT,
+    message TEXT,
+    context TEXT
+);
+
 
 --
 -- Table structure for table `books`

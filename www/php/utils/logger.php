@@ -1,9 +1,9 @@
 <?php
+include_once 'db_manager.php';
 
 class Logger {
     private static $instance;
-    private $file;
-    private $level;
+    private $dbManager;
 
     const LOG_LEVEL_DEBUG    = 0;
     const LOG_LEVEL_INFO     = 1;
@@ -11,36 +11,24 @@ class Logger {
     const LOG_LEVEL_ERROR    = 3;
     const LOG_LEVEL_CRITICAL = 4;
 
-    private function __construct($file = NULL, $level = self::LOG_LEVEL_INFO) {
-        if (!isset($file)) {
-            $this->file = '../../log/bookshop.log';
-        } else {
-            $this->file = $file;
-        }
-        $this->level = $level;
+    private function __construct() {
+        $this->dbManager = DBManager::get_instance();
     }
 
-    public static function getInstance($file = NULL, $level = self::LOG_LEVEL_INFO) {
+    public static function getInstance() {
         if (!isset(self::$instance)) {
-            self::$instance = new Logger($file, $level);
+            self::$instance = new Logger();
         }
         return self::$instance;
     }
 
     public function log($level, $message, $context = []) {
-        if ($level < $this->level) {
-            return;
-        }
-
-        $timestamp = date('Y-m-d H:i:s');
-        $logMessage = "[$timestamp][$level] $message";
-
-        if (!empty($context)) {
-            $logMessage .= ' ' . json_encode($context);
-        }
-
-        $logMessage .= PHP_EOL;
-        file_put_contents($this->file, $logMessage, FILE_APPEND | LOCK_EX);
+        $this->dbManager->exec_query(
+            "INSERT",
+            "INSERT INTO log_messages (level, message, context) VALUES (?, ?, ?)",
+            [$level, $message, json_encode($context)],
+            'iss'
+        );
     }
 
     public function debug($message, $context = []) {
@@ -59,13 +47,9 @@ class Logger {
         $this->log(self::LOG_LEVEL_ERROR, $message, $context);
     }
 
-    public function cirtical($message, $context = []) {
+    public function critical($message, $context = []) {
         $this->log(self::LOG_LEVEL_CRITICAL, $message, $context);
     }
 }
 
-// Example usage:
-// $file = 'app.log';
-// $logger = Logger::getInstance(NULL, Logger::LOG_LEVEL_DEBUG);
-// $logger->info('User logged in.', ['user_id' => 123]);
-// $logger->error('Database connection failed.', ['error' => 'connection timeout']);
+?>
