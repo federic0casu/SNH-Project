@@ -5,8 +5,8 @@ include_once 'navigation.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 use ZxcvbnPhp\Zxcvbn;
 
-//Check if a specified form field has been supplied
-//and is not empty in the POST array.
+// Check if a specified form field has been supplied
+// and is not empty in the POST array.
 function check_field_presence(string $fieldname) : bool{
     if (!isset($_POST[$fieldname]) || empty($_POST[$fieldname])) {
         return false;
@@ -14,9 +14,9 @@ function check_field_presence(string $fieldname) : bool{
     return true;
 }
 
-//Check if a specified form field has been supplied
-//and is not empty in the POST array. If it is,
-//redirect to the specified page with an error message.
+// Check if a specified form field has been supplied
+// and is not empty in the POST array. If it is,
+// redirect to the specified page with an error message.
 function check_field_and_redirect_error(string $page_name, string $fieldname) : bool{
     //Check if a field is filled. If it isn't, redirect to the
     //specified page with an error message.
@@ -50,9 +50,9 @@ function is_valid_email_address(string $addr) : bool{
     return is_string($addr) && filter_var($addr, FILTER_VALIDATE_EMAIL);
 }
 
-//Check if a password abides the rules. The function returns an 
-//error string. If empty, the password passed all checks.
-function check_valid_password(string $pass) : string{
+// Check if a password abides the rules. The function returns an 
+// error string. If empty, the password passed all checks.
+function check_valid_password(string $pass) : string {
     if (strlen($pass) < 8 || strlen($pass) > 16) {
         return "Password length should be between 8 characters and 16 characters";
     }
@@ -75,8 +75,8 @@ function check_valid_password(string $pass) : string{
     return "";
 }
 
-//Check the password strength. Returns a warning string if
-//the password is too weak, otherwise an empty string.
+// Check the password strength. Returns a warning string if
+// the password is too weak, otherwise an empty string.
 function check_password_strength(string $pass, array $user_data) : string{
     //Remove passwords from user supplied data
     unset($user_data["password"]);

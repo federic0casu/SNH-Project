@@ -1,7 +1,7 @@
 <?php
 include 'php/utils/db_manager.php';
 
-//Show a sample of random books
+// Show a sample of random books
 $db = DBManager::get_instance();
 $query = "SELECT * FROM books ORDER BY RAND() LIMIT 4";
 $books = $db->exec_query("SELECT", $query);
@@ -53,7 +53,7 @@ $books = $db->exec_query("SELECT", $query);
     
     <section class="featured-books">
         <h2>Featured Books</h2>
-        
+
         <?php foreach ($books as $book): ?>
             <div class="book">
                 <img src="<?php echo $book['image_url_L']; ?>" alt="<?php echo $book['book_title']; ?>">
