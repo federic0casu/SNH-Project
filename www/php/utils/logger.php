@@ -25,7 +25,7 @@ class Logger {
     public function log($level, $message, $context = []) {
         $this->dbManager->exec_query(
             "INSERT",
-            "INSERT INTO log_messages (level, message, context) VALUES (?, ?, ?)",
+            "INSERT INTO `log_messages` (`level`, `message`, `context`) VALUES (?, ?, ?)",
             [$level, $message, json_encode($context)],
             'iss'
         );
