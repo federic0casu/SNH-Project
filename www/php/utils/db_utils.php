@@ -3,17 +3,17 @@ include_once "db_manager.php";
 
 function get_logged_user_id() : int{
 
-    // Check if the user_login cookie is set
+    //Check if the user_login cookie is set
     if(!isset($_COOKIE['user_login']) || !is_string($_COOKIE['user_login'])){
         return -1;
     }
 
-    // Fetch the login info of the user
+    //Fetch the login info of the user
     $db = DBManager::get_instance();
     $query = "SELECT * FROM `logged_users` WHERE `session_token` = ?";
     $query_rows = $db->exec_query("SELECT", $query, [$_COOKIE['user_login']], "s");
 
-    // Check that there is exactly 1 login_session
+    //Check that there is exactly 1 login_session
     if(count($query_rows) == 0){
         //TODO: SECURITY log this
         //Attempt to get logged with non-existant session
@@ -28,7 +28,7 @@ function get_logged_user_id() : int{
 
     $login_session = $query_rows[0];
 
-    // Check if the session needs expiring
+    //Check if the session needs expiring
     if(time() > strtotime($login_session['valid_until'])){
         //Logout the user
         logout_by_token($login_session['session_token']);

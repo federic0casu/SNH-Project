@@ -1,12 +1,12 @@
 <?php
-// UTIL IMPORTS
+//UTIL IMPORTS
 include_once 'csrf.php';
 include_once 'db_manager.php';
 include_once 'db_utils.php';
 include_once 'navigation.php';
 include_once 'validation.php';
-include_once 'logger.php';
 
-// CONSTANTS
+//CONSTANTS
 $lockout_threshold = 3;
+
 ?>
