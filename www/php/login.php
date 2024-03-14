@@ -22,7 +22,7 @@ $query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
 $is_registered = count($query_rows) == 1;
 
 //Get user data from query result (if user is registered)
-$user = $is_registered ? ['id' => -1, 'password' => ""] : $query_rows[0];
+$user = $is_registered ? $query_rows[0] : ['id' => NULL, 'password' => ""];
 
 //Check if the user is timed-out
 $query = "SELECT * FROM `wrong_login` WHERE `user_id` = ? AND `created_at` > DATE_SUB(NOW(), INTERVAL 1 MINUTE)";
