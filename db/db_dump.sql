@@ -128,7 +128,29 @@ ALTER TABLE `logged_users`
   ADD CONSTRAINT `FK_logged_users_username`
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
+--
+-- Table structure for table `log_messages`
+--
 
+CREATE TABLE `log_messages` (
+    `id` INT NOT NULL,
+    `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `level` INT,
+    `message` TEXT,
+    `context` TEXT
+);
+
+--
+-- Indexes for table `log_messages`
+--
+ALTER TABLE `log_messages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `log_messages`
+--
+ALTER TABLE `log_messages`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Table structure for table `books`
