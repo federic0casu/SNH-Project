@@ -51,7 +51,7 @@ $query = "SELECT * FROM `users` WHERE `email` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["email"]], "s");
 if(count($query_rows) > 0){
     $logger->warning('[REGISTER] e-mail already in use.', ['username' => $_POST["username"], 'email' => $_POST["email"]]);
-    redirect_with_error("register", "e-mail already in use");
+    redirect_with_error("register", "Email already in use");
 }
 
 //TODO: Send verification mail (as a util)
