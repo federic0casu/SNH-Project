@@ -27,29 +27,9 @@ $books = $db->exec_query("SELECT", $query);
         <div class="header-right">
             <button class="login-button" onclick="location.href='pages/login.php';">Login</button> 
             <button class="register-button" onclick="location.href='pages/register.php';">Register</button> 
-            <button class="cart-button" onclick="showCart()">Cart</button>
+            <button class="cart-button" onclick="location.href='pages/shopping_cart.php';">Cart</button>
         </div>
     </header>
-
-    <div id="cart-container">
-        <div class="close-button" onclick="showCart()">X</div>
-        <div class="cart-item">
-            <div>
-                <h3>Book Title</h3>
-                <p>Author: Author Name</p>
-            </div>
-        </div>
-        <button class="checkout-button">Proceed to Checkout</button>
-    </div>
-    <script>
-        // JavaScript to show/hide cart container
-        function showCart() {
-            if (document.getElementById("cart-container").style.display == 'block')
-                document.getElementById("cart-container").style.display = 'none';
-            else 
-                document.getElementById("cart-container").style.display = 'block';
-        }
-    </script>
     
     <section class="featured-books">
         <h2>Featured Books</h2>

@@ -1,0 +1,85 @@
+h2 {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+.action h2 {
+    text-align: center;
+    margin: 1%;
+    padding: 1%;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: none;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 10px;
+    width: calc(100% - 20px);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+input[type="number"] {
+    appearance: textfield;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:active {
+    background-color: #3e8e41;
+}
+
+.total {
+    font-weight: bold;
+}
+
+#cart {
+    width: 25%;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#cart td {
+    text-align: center;
+}
+
+#cart th {
+    text-align: center;
+}
+
+#cart img.book-image {
+    display: block;
+    margin: auto;
+}
