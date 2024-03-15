@@ -1,16 +1,16 @@
 <?php
 include_once 'utils/config_and_import.php';
 
-//Check that the user isn't already logged in
+// Check that the user isn't already logged in
 $user_id = get_logged_user_id();
 if($user_id > 0){
     redirect_to_index();
 }
 
-//Check that all needed data was supplied and is a string
+// Check that all needed data was supplied and is a string
 check_post_field_array("register", ["first_name", "last_name", "username", "email", "password", "confirm_password"]);
 
-//Check that the email has the correct format
+// Check that the email has the correct format
 if(!is_valid_email_address($_POST["email"])){
     redirect_with_error("register", "Wrong email address format");
 }
