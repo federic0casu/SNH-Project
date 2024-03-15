@@ -1,16 +1,16 @@
 <?php
 include_once 'utils/config_and_import.php';
 
-// Check that the user isn't already logged in
+//Check that the user isn't already logged in
 $user_id = get_logged_user_id();
 if($user_id > 0){
     redirect_to_index();
 }
 
-// Check that all needed data was supplied and is a string
+//Check that all needed data was supplied and is a string
 check_post_field_array("register", ["first_name", "last_name", "username", "email", "password", "confirm_password"]);
 
-// Check that the email has the correct format
+//Check that the email has the correct format
 if(!is_valid_email_address($_POST["email"])){
     redirect_with_error("register", "Wrong email address format");
 }
@@ -35,11 +35,14 @@ if(!empty($pass_strength_warning)){
 //Get DB instance
 $db = DBManager::get_instance();
 
+//Get Logger instance 
+$logger = Logger::getInstance();
+
 //Check if the username is already taken
 $query = "SELECT * FROM `users` WHERE `username` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
 if(count($query_rows) > 0){
-    //TODO: log this
+    $logger->warning('[REGISTER] Username already taken.', ['username' => $_POST["username"]]);
     redirect_with_error("register", "Username already taken");
 }
 
@@ -47,7 +50,7 @@ if(count($query_rows) > 0){
 $query = "SELECT * FROM `users` WHERE `email` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["email"]], "s");
 if(count($query_rows) > 0){
-    //TODO: log this
+    $logger->warning('[REGISTER] e-mail already in use.', ['username' => $_POST["username"], 'email' => $_POST["email"]]);
     redirect_with_error("register", "Email already in use");
 }
 

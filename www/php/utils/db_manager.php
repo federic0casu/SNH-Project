@@ -13,7 +13,7 @@ class DBManager{
     private $dbname;
     private $port;
 
-    // Constructor of the DBManager class
+    //Constructor of the DBManager class
     private function __construct(){
         $this->hostname = "db";
         $this->username = getenv("MYSQL_USER");
@@ -23,7 +23,7 @@ class DBManager{
         $this->connect_to_db();
     }
 
-    // Launched only once at class creation time
+    //Launched only once at class creation time
     private function connect_to_db() : void{
         $this->connection = new mysqli(
             $this->hostname,
@@ -37,7 +37,7 @@ class DBManager{
         }
     }
 
-    // The function used to get a DBManager instance in a singleton-like manner.
+    //The function used to get a DBManager instance in a singleton-like manner.
     public static function get_instance() : ?DBManager{
         if(self::$instance == null) {
             self::$instance = new DBManager();
@@ -45,31 +45,31 @@ class DBManager{
         return self::$instance;
     }
 
-    // Execute a specified prepared statement query
+    //Execute a specified prepared statement query
     function exec_query(string $query_type, string $query, 
                         array $parameters = [], string $param_types = ""){
 
-        // Prepare query statement
+        //Prepare query statement
         $statement = $this->connection->prepare($query);
         if(!$statement){
             throw new Exception('Prepare failed ('.$this->connection->connect_errno.') '.
                 $this->connection->connect_error);
         }
 
-        // Check if there are parameters that need binding
+        //Check if there are parameters that need binding
         if(!empty($parameters)){
-            // Check that the number of parameters and their types is consistent
+            //Check that the number of parameters and their types is consistent
             if(count($parameters) !== strlen($param_types)){
                 throw new Exception('Mismatched Bind params amount and types amount');
             }
-            // Bind and check if it fails
+            //Bind and check if it fails
             if(!$statement->bind_param($param_types, ...$parameters)){
                 throw new Exception('Bind failed (' . $statement->connect_errno . ') ' .
                 $statement->connect_error);
             }
         }
 
-        // Execute the prepared statement and check if it fails
+        //Execute the prepared statement and check if it fails
         $result = $statement->execute();
         if(!$result){
             throw new Exception('Execute failed (' . $statement->connect_errno . ') ' .
