@@ -1,8 +1,26 @@
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
     text-align: center;
-    margin-top: 5%;
     background-color: #f4f4f4;
+}
+
+header {
+    text-align: center;
+    margin: 0;
+    padding: 50px;
+    background-color: #333;
+    color: #fff;
+}
+
+header h1 {
+    font-size: 3em;
+}
+
+header p {
+    font-size: 1.2em;
+    margin-top: 15%;
+    margin-left: -7.5%;
 }
 
 footer {
@@ -33,6 +51,20 @@ input[type="submit"]:hover {
     background-color: #45a049;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
 .about-us {
     text-align: justify;
     padding: 50px;
@@ -48,96 +80,10 @@ input[type="submit"]:hover {
     line-height: 1.6;
 }
 
-.book {
-    display: inline-block;
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    max-width: 300px;
-}
-
-.book img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.book h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-
-.book p {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-}
-
-.book button {
-    padding: 10px 20px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-size: 1em;
-}
-
-.book button:hover {
-    background-color: #555;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-.checkout-button {
-    display: block;
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 1em;
-    text-align: center;
-    text-decoration: none;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.checkout-button:hover {
-    background-color: #555;
-}
-
-.container {
-    margin: auto;
-    width: 300px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
-.error-message {
-    color: red;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-.featured-books {
-    text-align: center;
-    padding: 50px;
-}
-
-.featured-books h2 {
-    margin-bottom: 20px;
-}
-
 .login-button,
 .register-button,
-.cart-button {
+.cart-button,
+.home-button {
     display: inline-block;
     padding: 10px 20px;
     font-size: 1em;
@@ -153,6 +99,7 @@ input[type="submit"]:hover {
 
 .login-button:hover,
 .register-button:hover,
-.cart-button:hover {
+.cart-button:hover,
+.home-button:hover {
     background-color: #555;
 }

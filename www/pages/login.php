@@ -15,14 +15,15 @@ if($user_id > 0){
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login</title>
         <link rel="stylesheet" href="../css/style.css">
-        <?php ?>
+        <link rel="stylesheet" href="../css/login.css">
     </head>
     <body>
         <div class="container">
             <h2>Login</h2>
             <div class="error-message" id="error-message" style="display:none;">
                 We have a little problem. Please make sure you are logged in.
-            </div><br>
+            </div>
+            <br>
             <form action="../php/login.php" method="post">
                 <label for="username">Username:</label><br>
                 <input type="text" id="username" name="username" required><br><br>

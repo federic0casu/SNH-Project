@@ -14,14 +14,16 @@ if($user_id > 0){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
-    <link rel="stylesheet" href="../css/style.css"> 
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/register.css">
 </head>
 <body>
     <div class="container">
         <h2>Registration</h2>
         <div class="error-message" id="error-message" style="display:none;">
             We have a little problem. Please make sure you are logged in.
-        </div><br>
+        </div>
+        <br>
         <form action="../php/register.php" method="post">
             <label for="first_name">First Name:</label><br>
             <input type="text" id="first_name" name="first_name" required><br><br>
