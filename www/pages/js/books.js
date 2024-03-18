@@ -34,7 +34,7 @@ function updateResults(response) {
                 <img src="${book.image}" alt="${book.title}">
                 <h3>${book.title}</h3>
                 <p>Author: ${book.author}</p>
-                <button>Add to Cart</button>
+                <button onclick="location.href='../php/update_cart.php?isbn=${book.isbn}&action=1'">Add to Cart</button>
             `);
 
             row.append(bookDiv);

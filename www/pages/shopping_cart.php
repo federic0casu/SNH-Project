@@ -1,3 +1,37 @@
+<?php
+include_once "../php/utils/config_and_import.php";
+
+$db = DBManager::get_instance();
+
+// Get user id
+$user_id = get_logged_user_id();
+
+// If user id is less than 0 ==> user not logged in
+if ($user_id < 0) {
+    // Check if anonymous user cookie is not set
+    if (!isset($_COOKIE['anonymous_user'])) {
+        // Create anonymous session and set user id
+        $user_id = create_anonymous_session();
+    } else {
+        // Get anonymous user id
+        $user_id = get_anonymous_user_id();
+        
+        // If anonymous user id is still less than 0 ==> error
+        if ($user_id < 0) {
+            // Redirect to error page
+            redirect_to_page("error");
+        }
+    }
+}
+
+$query = "SELECT * FROM `shopping_carts` WHERE `user_id` = ?";
+$cart = $db->exec_query("SELECT", $query, [$user_id], "i");
+
+$cart = (is_null($cart)) ? [] : $cart;
+
+$total = 0.0;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,11 +64,30 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+
+        <?php foreach ($cart as $item): ?>
+            <tr>
+                <td>
+                    <div>
+                        <img src="<?php echo $item['image_url_M']; ?>" alt="<?php echo $item['book_title']; ?>">
+                    </div>
+                </td>
+                <td> <?php echo $item['price']; ?> $</td>
+                <td> <?php echo $item['quantity']; ?></td>
+                <td>
+                    <button class="action" onclick="location.href='../php/update_cart.php?isbn=<?php echo urlencode($item['isbn']); ?>&action=1'"><h2> + </h2></button>
+                    <button class="action" onclick="location.href='../php/update_cart.php?isbn=<?php echo urlencode($item['isbn']); ?>&action=2'"><h2> - </h2></button>
+                </td>
+            </tr>
+        <?php $total += $item['price'] * $item['quantity']; ?>
+        <?php endforeach; ?>
+
+        </tbody>
         <tfoot>
             <tr>
                 <td colspan="1" class="total">Total:</td>
-                <td id="total">0.0 $</td>
+                <td id="total"><?php echo $total; ?> $</td>
             </tr>
         </tfoot>
     </table>
