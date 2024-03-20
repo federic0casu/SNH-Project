@@ -1,8 +1,6 @@
 <?php
 include_once "../php/utils/config_and_import.php";
 
-$db = DBManager::get_instance();
-
 // Get user id
 $user_id = get_logged_user_id();
 
@@ -24,6 +22,7 @@ if ($user_id < 0) {
     }
 }
 
+$db = DBManager::get_instance();
 $query = "SELECT * FROM `shopping_carts` WHERE `user_id` = ?";
 $cart = $db->exec_query("SELECT", $query, [$user_id], "i");
 
@@ -93,7 +92,7 @@ $total = 0.0;
     </table>
     <br>
     <br>
-    <button class="checkout-button">Proceed to Checkout</button>
+    <button class="checkout-button" onclick="location.href='../pages/checkout.php'">Proceed to Checkout</button>
 
     <section class="about-us">
         <h2>About Us</h2>

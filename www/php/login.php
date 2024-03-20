@@ -1,6 +1,10 @@
 <?php
 include_once 'utils/config_and_import.php';
 
+// Fetches the current session (even if the user is not logged in); 
+//some NON-critical data is saved to enhance the user experience.
+session_start();
+
 //Check that the user isn't already logged in
 $user_id = get_logged_user_id();
 if($user_id > 0){
@@ -95,7 +99,13 @@ setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true
 $query = "UPDATE `shopping_carts` SET `user_id` = ? WHERE `user_id` = ?";
 $db->exec_query("UPDATE", $query, [$user["id"], $anonymous_user_id], "ii");
 
+
+//Check if the user arrives from the checkout procedure
+if(isset($_SESSION['checkout']) && $_SESSION['checkout'] === 1) {
+    redirect_to_page("shopping_cart");
+} 
+
 //Redirect to home
 redirect_to_index();
 
-?>
+?>$_SESSION['checkout']

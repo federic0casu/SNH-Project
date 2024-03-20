@@ -1,0 +1,68 @@
+
+th, td {
+    border: none;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.total {
+    font-weight: bold;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-form {
+    width: 35%;
+    padding: 2.5%;
+}
+
+.payment-form label {
+    display: block;
+    margin-bottom: 2.5%;
+}
+
+.payment-form input,
+.payment-form textarea {
+    width: 75%;
+    padding: 2%;
+    margin-bottom: 1%;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.payment-form input[type="submit"] {
+    width: 25%;
+    padding: 1.25%;
+    border-radius: 4px;
+}
+
+#cart {
+    width: 50%;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#cart td {
+    text-align: center;
+}
+
+#cart th {
+    text-align: center;
+}
+
+#cart img.book-image {
+    display: block;
+    margin: auto;
+}
