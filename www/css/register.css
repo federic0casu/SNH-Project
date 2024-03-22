@@ -5,6 +5,14 @@ body {
     background-color: #f4f4f4;
 }
 
+input[type="text"], input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
 .container {
     margin: auto;
     width: 300px;

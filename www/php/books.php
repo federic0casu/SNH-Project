@@ -11,12 +11,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $books = array();
 
-    if (count($query_rows) > 0){
-        foreach($query_rows as $book){
+    if (count($query_rows) > 0) {
+        foreach($query_rows as $book) {
             $books[] = array(
-                'title' => $book['book_title'],
+                'isbn'   => $book['isbn'],
+                'title'  => $book['book_title'],
                 'author' => $book['book_author'],
-                'image' => $book['image_url_M']
+                'image'  => $book['image_url_M']
             );
         }
     } else {

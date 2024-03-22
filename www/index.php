@@ -39,7 +39,7 @@ $books = $db->exec_query("SELECT", $query);
                 <img src="<?php echo $book['image_url_L']; ?>" alt="<?php echo $book['book_title']; ?>">
                 <h3><?php echo $book['book_title']; ?></h3>
                 <p>Author: <?php echo $book['book_author']; ?></p>
-                <button>Add to Cart</button>
+                <button onclick="location.href='php/update_cart.php?isbn=<?php echo urlencode($book['isbn']); ?>&action=1'">Add to Cart</button>
             </div>
         <?php endforeach; ?>
 
