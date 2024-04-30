@@ -1,6 +1,10 @@
 <?php
 include_once 'utils/config_and_import.php';
 
+// Fetches the current session (even if the user is not logged in); 
+//some NON-critical data is saved to enhance the user experience.
+session_start();
+
 //Check that the user isn't already logged in
 $user_id = get_logged_user_id();
 if($user_id > 0){
@@ -69,11 +73,39 @@ $query = "INSERT INTO `logged_users` (`user_id`, `session_token`, `valid_until`)
          "(?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))";
 $query_result = $db->exec_query("INSERT", $query, [$user["id"],$session_token], "is");
 
+//Check if the user have an anonymous token
+$anonymous_user_id = get_anonymous_user_id();
+if ($anonymous_user_id < 0) {
+    //The anonymous token is not set:
+    //   -> the current user haven't added yet a book to his/her shopping cart
+    //   -> we don't have to update the anonymous id (setting it to the newly 
+    //      created id) in the shopping cart table 
+
+    //Save the cookie
+    setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true, true);
+
+    //Redirect to home
+    redirect_to_index();
+    exit;
+}
+
+//Expire current anonymous session
+expire_anonymous_session_by_token($_COOKIE['anonymous_user']);
+
 //Save the cookie
 setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true, true);
+
+//Update user_id in shopping_cart table
+$query = "UPDATE `shopping_carts` SET `user_id` = ? WHERE `user_id` = ?";
+$db->exec_query("UPDATE", $query, [$user["id"], $anonymous_user_id], "ii");
+
+
+//Check if the user arrives from the checkout procedure
+if(isset($_SESSION['checkout']) && $_SESSION['checkout'] === 1) {
+    redirect_to_page("shopping_cart");
+} 
 
 //Redirect to home
 redirect_to_index();
 
-?>
-
+?>$_SESSION['checkout']

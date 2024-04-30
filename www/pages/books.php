@@ -17,9 +17,9 @@
             <p>Your Source for Great Reads</p>
         </div>
         <div class="header-right">
-            <button class="login-button" onclick="location.href='pages/login.php';">Login</button> 
-            <button class="register-button" onclick="location.href='pages/register.php';">Register</button> 
-            <button class="cart-button" onclick="location.href='pages/shopping_cart.php';">Cart</button>
+            <button class="login-button" onclick="location.href='login.php';">Login</button> 
+            <button class="register-button" onclick="location.href='register.php';">Register</button> 
+            <button class="cart-button" onclick="location.href='shopping_cart.php';">Cart</button>
         </div>
     </header>
 
