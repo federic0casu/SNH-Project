@@ -37,9 +37,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install git and unzip (needed to fetch Zxcvbn)
 RUN apt-get -y install git && apt-get -y install unzip
 
-# Install zxcvbn
+# Install zxcvbn and phpmailer
 RUN composer install
 RUN composer require bjeavons/zxcvbn-php
+RUN composer require phpmailer/phpmailer
 RUN composer update
 
 # Cleanup unnecessary files
