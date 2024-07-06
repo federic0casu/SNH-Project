@@ -1,4 +1,5 @@
 <?php
+include 'php/utils/csrf.php';
 include 'php/utils/db_manager.php';
 
 //Show a sample of random books
@@ -28,6 +29,10 @@ $books = $db->exec_query("SELECT", $query);
             <button class="login-button" onclick="location.href='pages/login.php';">Login</button> 
             <button class="register-button" onclick="location.href='pages/register.php';">Register</button> 
             <button class="cart-button" onclick="showCart()">Cart</button>
+            <form action="../php/utils/logout.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                <input type="submit" value="Logout">
+            </form>
         </div>
     </header>
 
