@@ -1,5 +1,7 @@
 <?php
 
+    session_start();
+
     // Generate and set a new CSRF token.
     function generate_csrf_token(){
         $csrf_token = bin2hex(random_bytes(32));

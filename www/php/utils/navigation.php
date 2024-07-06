@@ -29,6 +29,11 @@ function redirect_with_error(string $page_name, string $error_message) : void{
 //Redirect to the index page
 function redirect_to_index() : void{
     header("Location: //".$_SERVER["SERVER_NAME"]);
+    //Close connection to db if it was open, then exit
+    if(isset($conn)){
+        $conn->close();
+    }
+    die();
 }
 
 ?>
