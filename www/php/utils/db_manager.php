@@ -1,7 +1,5 @@
 <?php
 
-//TODO: Maybe switch exceptions to the log?
-
 class DBManager{
 
     private static $instance = null;
