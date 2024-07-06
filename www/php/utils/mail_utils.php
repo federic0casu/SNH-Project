@@ -9,7 +9,7 @@ use PHPMailer\PHPMailer\SMTP;
 
 include_once 'logger.php';
 
-function sendMail($email, $name, $subject, $message) {
+function send_mail($email, $name, $subject, $message) {
     //Get Logger instance 
     $logger = Logger::getInstance();
     
