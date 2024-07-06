@@ -5,6 +5,9 @@ include_once "navigation.php";
 
 function get_logged_user_id() : int {
 
+    //Get Logger instance 
+    $logger = Logger::getInstance();
+
     //Check if the user_login cookie is set
     if(!isset($_COOKIE['user_login']) || !is_string($_COOKIE['user_login'])) {
         return -1;
@@ -17,14 +20,14 @@ function get_logged_user_id() : int {
 
     //Check that there is exactly 1 login_session
     if(count($query_rows) == 0){
-        //TODO: SECURITY log this
         //Attempt to get logged with non-existant session
+        $logger->warning('[GET_USER] Attempt to get logged user with non-existant session.',['session_token'=>$_COOKIE['user_login']]);
         return -2;
     }
     if(count($query_rows) > 1){
-        //TODO: SECURITY log this
         //Multiple login session active for the same token,
         //something very bad happened
+        $logger->warning('[GET_USER] Multiple login session active for the same token.',['session_token'=>$_COOKIE['user_login']]);
         return -3;
     }
 
