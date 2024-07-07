@@ -3,9 +3,7 @@ FROM php:apache
 # Copy files
 WORKDIR /var/www/bookshop
 # Copying just the needed files
-COPY /www/composer.json /var/www/bookshop/composer.json
-COPY /www/composer.lock /var/www/bookshop/composer.lock
-COPY /www/vendor /var/www/bookshop/vendor
+COPY /www/ /var/www/bookshop
 
 # To enable Apache's mod_rewrite module
 RUN a2enmod rewrite

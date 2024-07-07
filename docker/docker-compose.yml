@@ -30,8 +30,6 @@ services:
     ports:
       - 80:80
       - 443:443 # for ssl traffic
-    volumes:
-      - ./../www:/var/www/bookshop
   
   phpmyadmin:
     container_name: phpmyadmin
