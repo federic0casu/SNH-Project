@@ -47,8 +47,18 @@
 
     <div class="error-container">
         <h1>Oops! Something went wrong.</h1>
-        <p>We're sorry, but an unexpected error occurred. Please try again later.</p>
-        <p>If the problem persists, contact <a href="mailto:support@bookemporium.com">support@bookemporium.com</a>.</p>
+        <?php
+            // Check if the 'error' parameter is set in the URL
+            if (isset($_GET['error'])) {
+                // Sanitize the error message to prevent XSS
+                $error_message = htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8');
+                echo "<p>$error_message</p>";
+            } else {
+                echo "<p>We're sorry, but an unexpected error occurred. Please try again later.</p>";
+            }
+        ?>
+        <!-- <p>If the problem persists, contact <a href="mailto:support@bookemporium.com">support@bookemporium.com</a>.</p> -->
+        <p><a href="../index.php">Go back to home page</a></p>
     </div>
 
 </body>

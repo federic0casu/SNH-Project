@@ -99,13 +99,11 @@ setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true
 $query = "UPDATE `shopping_carts` SET `user_id` = ? WHERE `user_id` = ?";
 $db->exec_query("UPDATE", $query, [$user["id"], $anonymous_user_id], "ii");
 
-
 //Check if the user arrives from the checkout procedure
 if(isset($_SESSION['checkout']) && $_SESSION['checkout'] === 1) {
     redirect_to_page("shopping_cart");
-} 
+}
 
 //Redirect to home
 redirect_to_index();
-
-?>$_SESSION['checkout']
+?>

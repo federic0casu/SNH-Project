@@ -34,8 +34,8 @@ USE book_shop_db;
 -- Table structure for table `users`
 --
 CREATE TABLE `users` (
-  `id` int NOT NULL,
-  `username` varchar(50) NOT NULL,
+  `id` int NOT NULL PRIMARY KEY,
+  `username` varchar(50) NOT NULL UNIQUE,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -49,14 +49,6 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, '2023-11-07 19:51:03');
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `users`
-  ADD UNIQUE (`username`);
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -165,11 +157,12 @@ ALTER TABLE `log_messages`
 ALTER TABLE `log_messages`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
+
 --
 -- Table structure for table `books`
 --
 CREATE TABLE `books` (
-  `isbn` varchar(10) NOT NULL,
+  `isbn` varchar(10) NOT NULL PRIMARY KEY,
   `book_title` varchar(255) NOT NULL,
   `book_author` varchar(50) NOT NULL,
   `year_of_publication` varchar(4) NOT NULL,
@@ -285,6 +278,50 @@ ALTER TABLE `shopping_carts`
 --
 ALTER TABLE `shopping_carts`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+
+--
+-- Table structure for table `orders`
+--
+CREATE TABLE `orders` (
+    `order_id`             INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id`              INT NOT NULL,
+    `billing_first_name`   VARCHAR(50) NOT NULL,
+    `billing_last_name`    VARCHAR(50) NOT NULL,
+    `billing_address`      TEXT NOT NULL,
+    `billing_city`         VARCHAR(50) NOT NULL,
+    `billing_postal_code`  VARCHAR(10) NOT NULL,
+    `billing_country`      VARCHAR(50) NOT NULL,
+    `card_number`          VARCHAR(20) NOT NULL,
+    `expiry_date`          VARCHAR(5) NOT NULL,
+    `cvv`                  VARCHAR(3) NOT NULL,
+    `shipping_address`     TEXT,        -- if NULL => shipping_address = billing_address
+    `shippping_city`       VARCHAR(50), -- if NULL => shipping_city = billing_city
+    `shipping_postal_code` VARCHAR(10), -- if NULL => shipping_postal_code = billing_postal_code
+    `shipping_country`     VARCHAR(50), -- if NULL => shipping_country = billing_country
+    `total_price`          DECIMAL(10, 2),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `status`               INT NOT NULL DEFAULT 0, -- 0 => 'pending', 1 => 'OK', 2 => 'shipped'
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+--
+-- Table structure for table `order_items`
+--
+CREATE TABLE `order_items` (
+    `item_id`   INT AUTO_INCREMENT PRIMARY KEY,
+    `order_id`  INT NOT NULL,
+    `isbn`      VARCHAR(13) NOT NULL,
+    `title`     VARCHAR(255) NOT NULL,
+    `author`    VARCHAR(255) NOT NULL,
+    `price`     DECIMAL(10, 2) NOT NULL,
+    `quantity`  INT NOT NULL,
+    `image_url` VARCHAR(255),
+    FOREIGN KEY (`order_id`) REFERENCES `orders`(`order_id`),
+    FOREIGN KEY (`isbn`) REFERENCES `books`(`isbn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 COMMIT;

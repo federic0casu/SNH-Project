@@ -94,4 +94,7 @@ function check_password_strength(string $pass, array $user_data) : string{
     return "";
 }
 
+function sanitize_input($input) {
+    return htmlspecialchars(trim(stripslashes($input)));
+}
 ?>

@@ -145,4 +145,225 @@ function expire_anonymous_session_by_token($session_token) : void {
     }
 }
 
+function get_cart($user_id) : array {
+    try {
+        $db = DBManager::get_instance();
+        $query = "SELECT SC.`isbn` AS `isbn`, SC.`book_title` AS `title`,
+                        SC.`book_author` AS `author`, SC.`price` AS `price`,
+                        SC.`quantity` AS `quantity`, B.`image_url_S` AS `image`
+                        FROM `shopping_carts` AS SC INNER JOIN `books` AS B ON SC.`isbn` = B.`isbn`
+                        WHERE SC.`user_id` = ?";
+        $cart = $db->exec_query("SELECT", $query, [$user_id], "i");
+
+        $order = array();
+        if (count($cart) > 0) {
+            foreach($cart as $book) {
+                $order[] = array(
+                    'isbn'     => $book['isbn'],
+                    'title'    => $book['title'],
+                    'author'   => $book['author'],
+                    'price'    => $book['price'],
+                    'quantity' => $book['quantity'],
+                    'image'    => $book['image']
+                );
+            }
+        }
+        return $order;
+    } catch (Exception $e) {
+        $logger = Logger::getInstance();
+        $logger->error('[ERROR] Trace: get_cart(user_id)', ['message' => $e->getMessage()]);
+        return NULL;
+    }
+}
+
+function insert_payment_method($user_id, $firstname, $lastname, 
+        $address, $city, $postal_code, $country, 
+        $card_number, $expiry_date, $cvv
+) : int {
+    try {
+        $db = DBManager::get_instance();
+
+        // Begin transaction
+        $db->begin_transaction();
+
+        // Prepare and execute query
+        $query = "INSERT INTO `orders` (" . 
+                    "`user_id`, `billing_first_name`, `billing_last_name`, " . 
+                    "`billing_address`, `billing_city`, `billing_postal_code`, `billing_country`, " . 
+                    "`card_number`, `expiry_date`, `cvv`) " .
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $order_id = $db->exec_query("INSERT", $query, [
+            $user_id, $firstname, $lastname,
+            $address, $city, $postal_code, $country,
+            $card_number, $expiry_date, $cvv], 
+            "isssssssss");
+
+        // Commit transaction
+        $db->commit();
+
+        return $order_id;
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $db->rollback();
+
+        $logger = Logger::getInstance();
+        $logger->error('[ERROR] Trace: insert_payment_method()', ['message' => $e->getMessage()]);
+        return -1;
+    }
+}
+
+function insert_shipping_address($user_id, $order, $address, $city, $postal_code, $country) {
+    try {
+        $db = DBManager::get_instance();
+
+        // Begin transaction
+        $db->begin_transaction();
+
+        // Insert shipping address into orders table
+        $query = "UPDATE `orders` SET `shipping_address` = ?, `shippping_city` = ?,
+                    `shipping_postal_code` = ?, `shipping_country` = ? WHERE `order_id` = ?";
+        $db->exec_query("UPDATE", $query, [
+            $address,
+            $city,
+            $postal_code,
+            $country,
+            $_SESSION['order_id']
+        ], "ssssi");
+
+        // Commit transaction
+        $db->commit();
+
+        return $_SESSION['order_id'];
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $db->rollback();
+
+        $logger = Logger::getInstance();
+        $logger->error('[ERROR] Trace: insert_shipping_address()', ['message' => $e->getMessage()]);
+        redirect_with_error("error", "Something went wrong while processing your shipping address. Please try again later.");
+    }
+}
+
+// Function to fetch order details
+function get_order_details($user_id, $order_id) : array {
+    try {
+        $db = DBManager::get_instance();
+
+        $query = "SELECT * FROM `orders` WHERE `order_id` = ? AND `user_id` = ?";
+        $result = $db->exec_query("SELECT", $query, [$order_id, $user_id], "ii");
+
+        if (!empty($result)) {
+            return $result[0]; // Assuming only one order per order_id and user_id combination
+        } else {
+            return array();
+        }
+    } catch (Exception $e) {
+        $logger = Logger::getInstance();
+        $logger->error('[ERROR] Trace: get_order_details()', ['message' => $e->getMessage()]);
+        return NULL;
+    }
+}
+
+//Function to insert order items into the order_items table.
+function insert_order_items($order_items, $order_id, $user_id) {
+    try {
+        $db = DBManager::get_instance();
+
+        // Begin transaction
+        $db->begin_transaction();
+
+        // Prepare the insert query
+        $query = "INSERT INTO `order_items` 
+                    (`order_id`, `isbn`, `title`, `author`, `price`, `quantity`, `image_url`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        // Iterate through each item and execute the insert query
+        foreach ($order_items as $item) {
+            $db->exec_query("INSERT", $query, [
+                $order_id,
+                $item['isbn'],
+                $item['title'],
+                $item['author'],
+                $item['price'],
+                $item['quantity'],
+                $item['image']
+            ], "isssdss");
+        }
+
+        if (!update_order_status($order_id, 1))
+            throw new Exception('Failed to update order status.');
+
+        if (!delete_items_from_cart($user_id))
+            throw new Exception('Failed to update shopping cart.');
+
+        // Commit transaction
+        $db->commit();
+
+        // Return true if all inserts were successful
+        return true;
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $db->rollback();
+
+        $logger = Logger::getInstance();
+        $logger->error('[ERROR] Trace: insert_order_items()', ['message' => $e->getMessage()]);
+        return false;
+    }
+}
+
+//Function to update the status of an order in the orders table.
+function update_order_status($order_id, $status) : bool {
+    try {
+        // Get the database instance
+        $db = DBManager::get_instance();
+
+        // Begin transaction
+        $db->begin_transaction();
+
+        // Prepare the update query
+        $query = "UPDATE `orders` SET `status` = ? WHERE `order_id` = ?";
+        $db->exec_query("UPDATE", $query, [$status, $order_id], "ii");
+
+        // Commit transaction
+        $db->commit();
+
+        // Return true indicating successful update
+        return true;
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $db->rollback();
+
+        // Log any database errors
+        $logger = Logger::getInstance();
+        $logger->error('[ERROR] Trace: update_order_status()', ['message' => $e->getMessage()]);
+        return false;
+    }
+}
+
+// Function to delete items from shopping cart
+function delete_items_from_cart($user_id) : bool {
+    try {
+        $db = DBManager::get_instance();
+
+        // Begin transaction
+        $db->begin_transaction();
+
+        // Prepare delete query
+        $query = "DELETE FROM `shopping_carts` WHERE `user_id` = ?";
+        $db->exec_query("DELETE", $query, [$user_id], "i");
+
+        // Commit transaction
+        $db->commit();
+
+        // Return true indicating successful update
+        return true;
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $db->rollback();
+
+        // Log and handle any errors
+        Logger::getInstance()->error('[ERROR] Trace: delete_items_from_cart()', ['message' => $e->getMessage()]);
+        return false;
+    }
+}
 ?>

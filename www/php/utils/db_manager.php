@@ -76,6 +76,11 @@ class DBManager{
                 $statement->connect_error);
         }
 
+        // Return the last inserted ID if it's an INSERT query
+        if($query_type == "INSERT") {
+            return $statement->insert_id;
+        }
+
         //Return the query result depending on the type of operation performed
         if ($query_type == "SELECT") {
             $query_result = $statement->get_result();
@@ -88,6 +93,20 @@ class DBManager{
         }
         
         return $result;
+    }
+
+    public function begin_transaction() {
+        if (!$this->connection->begin_transaction())
+            throw new Exception('Begin transaction failed.');
+    }
+
+    public function commit() {
+        if (!$this->connection->commit())
+            throw new Exception('Commit failed.');
+    }
+
+    public function rollback() {
+        $this->connection->rollback();
     }
 
     //The destructor of the DBManager class.

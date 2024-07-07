@@ -1,38 +1,67 @@
+.content {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.25%;
+    background-color: #fff;
+}
 
-th, td {
-    border: none;
-    padding: 15px;
+#order-summary,
+.payment-form {
+    background-color: #fff;
+    padding: 1.25%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#order-summary {
+    flex: 2;
+    margin-right: 5%;
+    text-align: left;
+}
+
+.payment-form {
+    flex: 1;
+    max-width: 350px;
+    text-align: left;
+}
+
+#order-summary table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#order-summary th,
+#order-summary td {
+    padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-th {
+#order-summary th {
     background-color: #f2f2f2;
 }
 
-.total {
+#order-summary td img {
+    max-width: 100px;
+    border-radius: 5px;
+}
+
+tfoot td {
     font-weight: bold;
-}
-
-.content {
-    display: flex;
-    justify-content: space-between;
-}
-
-.payment-form {
-    width: 35%;
-    padding: 2.5%;
+    text-align: right;
 }
 
 .payment-form label {
     display: block;
-    margin-bottom: 2.5%;
+    margin-top: 2.5%;
+    margin-bottom: 0.5%;
 }
 
 .payment-form input,
 .payment-form textarea {
-    width: 75%;
-    padding: 2%;
+    width: 100%;
+    padding: 1.25%;
     margin-bottom: 1%;
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -40,29 +69,16 @@ th {
 }
 
 .payment-form input[type="submit"] {
-    width: 25%;
+    width: 100%;
     padding: 1.25%;
-    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
-#cart {
-    width: 50%;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#cart td {
-    text-align: center;
-}
-
-#cart th {
-    text-align: center;
-}
-
-#cart img.book-image {
-    display: block;
-    margin: auto;
+.payment-form input[type="submit"]:hover {
+    background-color: #45a049;
 }
