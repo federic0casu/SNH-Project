@@ -25,11 +25,11 @@ services:
       - MYSQL_DATABASE=book_shop_db
       - MYSQL_USER=book_shop
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MAIL_ADDRESS=${MAIL_ADDRESS}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
     ports:
       - 80:80
       - 443:443 # for ssl traffic
-    volumes:
-      - ./../www:/var/www/bookshop
   
   phpmyadmin:
     container_name: phpmyadmin

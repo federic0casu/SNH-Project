@@ -17,6 +17,7 @@ function redirect_to_page(string $page_name, string $query=NULL) : void{
         $conn->close();
     }
     die();
+    exit();
 }
 
 //Used as a wrapper to redirect_to_page whenever an error
@@ -34,6 +35,7 @@ function redirect_to_index() : void{
         $conn->close();
     }
     die();
+    exit();
 }
 
 ?>

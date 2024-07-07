@@ -9,7 +9,12 @@ use PHPMailer\PHPMailer\SMTP;
 
 include_once 'logger.php';
 
-function send_mail($email, $name, $subject, $message) {
+function send_verification_mail($email, $receiver_username, $verification_token) : void {
+    $message = "Thanks for joining BookEmporium!<br>Click on the following link to verify your email address and complete your registration: https://{$_SERVER['SERVER_NAME']}/php/verify.php?verification_token={$verification_token}";
+    send_mail($email, $receiver_username, "BookEmporium Verification", $message);
+}
+
+function send_mail($email, $name, $subject, $message) : void{
     //Get Logger instance 
     $logger = Logger::getInstance();
     
@@ -20,13 +25,13 @@ function send_mail($email, $name, $subject, $message) {
         //enable verbose debug output (2 for detailed debug output)
         //$mail->SMTPDebug = 2;
 
-        //using the SMRP protocol to send the email
+        //using the SMTP protocol to send the email
         $mail->isSMTP();
 
         $mail->SMTPAuth = true;
         $mail->Host     = 'smtp.gmail.com';
-        $mail->Username = 'federicocasu.mail@gmail.com';
-        $mail->Password = '16 chars password (it should be in some .env file)';
+        $mail->Username = getenv('MAIL_ADDRESS');
+        $mail->Password = getenv('MAIL_PASSWORD');
 
         //by setting SMTPSecure to PHPMailer::ENCRYPTION_STARTTLS
         //we are telling PHPMailer to use TLS encryption method 
@@ -41,7 +46,7 @@ function send_mail($email, $name, $subject, $message) {
         $mail->Port = 587;
 
         //sender information
-        $mail->setFrom('federicocasu.mail@gmail.com', 'bookemporium.com');
+        $mail->setFrom($mail->Username, 'Book Emporium');
 
         //receiver email address and name
         $mail->addAddress($email, $name);  
@@ -53,7 +58,8 @@ function send_mail($email, $name, $subject, $message) {
         $mail->Subject = $subject;
         $mail->Body = $message;
 
-        $error = 'OK';
+        $error = "OK";
+
         // Attempt to send the email
         if (!$mail->send()) {
             $error = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
@@ -65,7 +71,6 @@ function send_mail($email, $name, $subject, $message) {
         $logger->warning('[SEND_MAIL] Failed attempt', ['result' => $error, 'to' => $email]);
     }
 
-    return $error;
 }
 
 //Example of usage
