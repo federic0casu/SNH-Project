@@ -20,13 +20,13 @@ function send_mail($email, $name, $subject, $message) {
         //enable verbose debug output (2 for detailed debug output)
         //$mail->SMTPDebug = 2;
 
-        //using the SMRP protocol to send the email
+        //using the SMTP protocol to send the email
         $mail->isSMTP();
 
         $mail->SMTPAuth = true;
         $mail->Host     = 'smtp.gmail.com';
-        $mail->Username = 'federicocasu.mail@gmail.com';
-        $mail->Password = '16 chars password (it should be in some .env file)';
+        $mail->Username = getenv('MAIL_ADDRESS');
+        $mail->Password = getenv('MAIL_PASSWORD');
 
         //by setting SMTPSecure to PHPMailer::ENCRYPTION_STARTTLS
         //we are telling PHPMailer to use TLS encryption method 
@@ -41,7 +41,7 @@ function send_mail($email, $name, $subject, $message) {
         $mail->Port = 587;
 
         //sender information
-        $mail->setFrom('federicocasu.mail@gmail.com', 'bookemporium.com');
+        $mail->setFrom($mail->Username, 'bookemporium.com');
 
         //receiver email address and name
         $mail->addAddress($email, $name);  
