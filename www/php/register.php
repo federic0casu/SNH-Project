@@ -54,11 +54,9 @@ if(count($query_rows) > 0){
     redirect_with_error("register", "Email already in use");
 }
 
-//TODO: Send verification mail (as a util)
-//$verification_token = send_verification_mail($_POST["email"]);
-
-//TODO: Remove later once mail verification has been implemented
+//Send verification mail
 $verification_token = bin2hex(random_bytes(32));
+send_verification_mail($_POST["email"], $_POST["username"], $verification_token);
 
 //Insert user into the database
 $query = "INSERT INTO `users` (`username`,`first_name`,`last_name`,`email`,`password`,`is_verified`,".
