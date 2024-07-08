@@ -1,8 +1,6 @@
 <?php
 include_once 'utils/config_and_import.php';
 
-session_start();
-
 $user_id = get_logged_user_id();
 if($user_id < 0) {
     // Set a session variable in order to redirect the user
@@ -85,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['order_id'] = $order;
 
     if ($order > 0) {
-        Logger::getInstance()->debug('[CHECKOUT] User succesfully inserted payment method.', ['userid' => $user_id, 'order' => $order]);
         redirect_to_page("shipping_address");
     } else {
         Logger::getInstance()->warning('[CHECKOUT] Something went wrong while processing payment method.', ['userid' => $user_id, 'order' => $order]);

@@ -1,10 +1,6 @@
 <?php
 include_once 'utils/config_and_import.php';
 
-// Fetches the current session (even if the user is not logged in); 
-//some NON-critical data is saved to enhance the user experience.
-session_start();
-
 //Check that the user isn't already logged in
 $user_id = get_logged_user_id();
 if($user_id > 0){

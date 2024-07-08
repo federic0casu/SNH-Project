@@ -48,7 +48,7 @@ CREATE TABLE `users` (
 --
 -- Dumping data for table `users`
 --
-INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'federicocasu@unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, '2023-11-07 19:51:03');
+INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'f.casu1@studenti.unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, '2023-11-07 19:51:03');
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -281,29 +281,60 @@ ALTER TABLE `shopping_carts`
 
 
 --
+-- Table structure for table `addresses`
+--
+CREATE TABLE `addresses` (
+    `address_id`  INT AUTO_INCREMENT PRIMARY KEY,
+    `address`     TEXT NOT NULL,
+    `city`        VARCHAR(50) NOT NULL,
+    `postal_code` VARCHAR(10) NOT NULL,
+    `country`     VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+--
+-- Table structure for table `payments`
+--
+CREATE TABLE `payments` (
+    `payment_id`  INT AUTO_INCREMENT PRIMARY KEY,
+    `card_number` VARCHAR(20) NOT NULL,
+    `expiry_date` VARCHAR(5) NOT NULL,
+    `cvv`         VARCHAR(3) NOT NULL,
+    `first_name`  VARCHAR(50) NOT NULL,
+    `last_name`   VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+--
+-- Table structure for table `statuses`
+--
+CREATE TABLE `statuses` (
+    `status_id`          INT AUTO_INCREMENT PRIMARY KEY,
+    `status_description` VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Insert default statuses
+INSERT INTO `statuses` (`status_description`) VALUES
+('pending'), ('confirmed'), ('shipped');
+
+--
 -- Table structure for table `orders`
 --
 CREATE TABLE `orders` (
-    `order_id`             INT AUTO_INCREMENT PRIMARY KEY,
-    `user_id`              INT NOT NULL,
-    `billing_first_name`   VARCHAR(50) NOT NULL,
-    `billing_last_name`    VARCHAR(50) NOT NULL,
-    `billing_address`      TEXT NOT NULL,
-    `billing_city`         VARCHAR(50) NOT NULL,
-    `billing_postal_code`  VARCHAR(10) NOT NULL,
-    `billing_country`      VARCHAR(50) NOT NULL,
-    `card_number`          VARCHAR(20) NOT NULL,
-    `expiry_date`          VARCHAR(5) NOT NULL,
-    `cvv`                  VARCHAR(3) NOT NULL,
-    `shipping_address`     TEXT,        -- if NULL => shipping_address = billing_address
-    `shippping_city`       VARCHAR(50), -- if NULL => shipping_city = billing_city
-    `shipping_postal_code` VARCHAR(10), -- if NULL => shipping_postal_code = billing_postal_code
-    `shipping_country`     VARCHAR(50), -- if NULL => shipping_country = billing_country
-    `total_price`          DECIMAL(10, 2),
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `status`               INT NOT NULL DEFAULT 0, -- 0 => 'pending', 1 => 'OK', 2 => 'shipped'
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+    `order_id`            INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id`             INT NOT NULL,
+    `billing_address_id`  INT NOT NULL,
+    `shipping_address_id` INT,
+    `payment_id`          INT NOT NULL,
+    `total_price`         DECIMAL(10, 2) NOT NULL,
+    `created_at`          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `status_id`           INT NOT NULL DEFAULT 0, -- 0 => 'pending', 1 => 'confirmed', 2 => 'shipped'
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+    FOREIGN KEY (`billing_address_id`) REFERENCES `addresses`(`address_id`),
+    FOREIGN KEY (`shipping_address_id`) REFERENCES `addresses`(`address_id`),
+    FOREIGN KEY (`payment_id`) REFERENCES `payments`(`payment_id`),
+    FOREIGN KEY (`status_id`) REFERENCES `statuses`(`status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -311,14 +342,11 @@ CREATE TABLE `orders` (
 -- Table structure for table `order_items`
 --
 CREATE TABLE `order_items` (
-    `item_id`   INT AUTO_INCREMENT PRIMARY KEY,
-    `order_id`  INT NOT NULL,
-    `isbn`      VARCHAR(13) NOT NULL,
-    `title`     VARCHAR(255) NOT NULL,
-    `author`    VARCHAR(255) NOT NULL,
-    `price`     DECIMAL(10, 2) NOT NULL,
-    `quantity`  INT NOT NULL,
-    `image_url` VARCHAR(255),
+    `item_id`  INT AUTO_INCREMENT PRIMARY KEY,
+    `order_id` INT NOT NULL,
+    `isbn`     VARCHAR(13) NOT NULL,
+    `price`    DECIMAL(10, 2) NOT NULL,
+    `quantity` INT NOT NULL,
     FOREIGN KEY (`order_id`) REFERENCES `orders`(`order_id`),
     FOREIGN KEY (`isbn`) REFERENCES `books`(`isbn`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -3,9 +3,11 @@ include_once "../php/utils/config_and_import.php";
 
 // Get user id
 $user_id = get_logged_user_id();
+$flag = true;
 
 // If user id is less than 0 ==> user not logged in
 if ($user_id < 0) {
+    $flag = false;
     // Check if anonymous user cookie is not set
     if (!isset($_COOKIE['anonymous_user'])) {
         // Create anonymous session and set user id
@@ -48,8 +50,17 @@ $total = 0.0;
         </div>
         <div class="header-right">
             <button class="home-button" onclick="location.href='../../index.php';">Home</button>
-            <button class="login-button" onclick="location.href='login.php';">Login</button> 
-            <button class="register-button" onclick="location.href='register.php';">Register</button> 
+            <?php if (!$flag): ?>
+                <button class="login-button" onclick="location.href='login.php';">Login</button>
+                <button class="register-button" onclick="location.href='register.php';">Register</button>
+            <?php endif; ?>
+            <?php if ($flag): ?>
+                <form action="../php/utils/logout.php" method="post">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                    <input class="logout-button" type="submit" value="Logout">
+                </form>
+                <button class="history-button" onclick="location.href='order_history.php';">Order History</button>
+            <?php endif; ?>  
         </div>
     </header>
 

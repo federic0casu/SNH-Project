@@ -36,10 +36,10 @@ if(count($query_rows) < 1){
     $logger->warning('[DOWNLOAD] User attempt to download a book they did not buy.', ['user_id' => $user_id]);
     redirect_to_index();
 }
-if(count($query_rows) > 1){
-    $logger->warning('[DOWNLOAD] User bought the same book multiple times.', ['user_id' => $user_id]);
-    redirect_to_index();
-}
+//if(count($query_rows) > 1){
+//    $logger->warning('[DOWNLOAD] User bought the same book multiple times.', ['user_id' => $user_id]);
+//    redirect_to_index();
+//}
 
 //If we got here, user certainly bought the book, let them download it
 $filename = "./../books/{$isbn}.pdf";

@@ -1,12 +1,31 @@
 <?php
-include 'php/utils/csrf.php';
-include 'php/utils/db_manager.php';
+include 'php/utils/config_and_import.php';
 
 //Show a sample of random books
-$db = DBManager::get_instance();
-$query = "SELECT * FROM books ORDER BY RAND() LIMIT 4";
-$books = $db->exec_query("SELECT", $query);
+$books = get_random_books();
 
+// Get user id
+$user_id = get_logged_user_id();
+$flag = true;
+
+// If user id is less than 0 ==> user not logged in
+if ($user_id < 0) {
+    $flag = false;
+    // Check if anonymous user cookie is not set
+    if (!isset($_COOKIE['anonymous_user'])) {
+        // Create anonymous session and set user id
+        $user_id = create_anonymous_session();
+    } else {
+        // Get anonymous user id
+        $user_id = get_anonymous_user_id();
+        
+        // If anonymous user id is still less than 0 ==> error
+        if ($user_id < 0) {
+            // Redirect to error page
+            redirect_to_page("error");
+        }
+    }
+}
 ?>
 
 
@@ -26,12 +45,16 @@ $books = $db->exec_query("SELECT", $query);
             <p>Your Source for Great Reads</p>
         </div>
         <div class="header-right">
-            <button class="login-button" onclick="location.href='pages/login.php';">Login</button> 
-            <button class="register-button" onclick="location.href='pages/register.php';">Register</button> 
-            <form action="../php/utils/logout.php" method="post">
-                <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
-                <input type="submit" value="Logout">
-            </form>
+            <?php if (!$flag): ?>
+                <button class="login-button" onclick="location.href='pages/login.php';">Login</button>
+                <button class="register-button" onclick="location.href='pages/register.php';">Register</button>
+            <?php endif; ?>
+            <?php if ($flag): ?>
+                <form action="../php/utils/logout.php" method="post">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                    <input class="logout-button" type="submit" value="Logout">
+                </form>
+            <?php endif; ?>
             <button class="cart-button" onclick="location.href='pages/shopping_cart.php';">Cart</button>
         </div>
     </header>
@@ -56,7 +79,7 @@ $books = $db->exec_query("SELECT", $query);
     </section>
 
     <footer>
-        <p>&copy; 2023 Book Emporium. All rights reserved.</p>
+        <p>&copy; <?php echo date("Y"); ?> Book Emporium. All rights reserved.</p>
     </footer>
 </body>
 </html>

@@ -1,8 +1,6 @@
 <?php
 include_once '../php/utils/config_and_import.php';
 
-session_start();
-
 // Check that the user is logged in
 $user_id = get_logged_user_id();
 if ($user_id < 0) {
@@ -31,7 +29,6 @@ if (empty($order)) {
     exit();
 }
 
-
 // Fetch the cart items for display
 $cart = get_cart($user_id);
 
@@ -51,6 +48,8 @@ if (empty($cart)) {
     );
     exit();
 }
+
+echo var_dump($order);
 ?>
 
 <!DOCTYPE html>
@@ -87,7 +86,7 @@ if (empty($cart)) {
             <p><strong>Expiry Date:</strong> <?php echo htmlspecialchars($order['expiry_date']);         ?></p>
             <h2>Shipping Address</h2>
             <p><strong>Address:</strong>     <?php echo htmlspecialchars($order['shipping_address']);    ?></p>
-            <p><strong>City:</strong>        <?php echo htmlspecialchars($order['shippping_city']);      ?></p>
+            <p><strong>City:</strong>        <?php echo htmlspecialchars($order['shipping_city']);       ?></p>
             <p><strong>Postal Code:</strong> <?php echo htmlspecialchars($order['shipping_postal_code']);?></p>
             <p><strong>Country:</strong>     <?php echo htmlspecialchars($order['shipping_country']);    ?></p>
         </div>

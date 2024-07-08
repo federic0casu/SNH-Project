@@ -1,8 +1,6 @@
 <?php
 include_once '../php/utils/config_and_import.php';
 
-session_start();
-
 $user_id = get_logged_user_id();
 if ($user_id < 0 || !isset($_SESSION['order_id'])) {
     redirect_with_error(
