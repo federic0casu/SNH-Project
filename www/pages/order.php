@@ -48,8 +48,6 @@ if (empty($cart)) {
     );
     exit();
 }
-
-echo var_dump($order);
 ?>
 
 <!DOCTYPE html>
