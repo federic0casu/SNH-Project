@@ -1,53 +1,32 @@
 <?php
 include_once '../php/utils/config_and_import.php';
 
-// Fetches the current session (even if the user is not logged in); 
-//some NON-critical data is saved to enhance the user experience.
 session_start();
 
-// Check that the user isn't logged in
 $user_id = get_logged_user_id();
 if($user_id < 0) {
-    // Set a session variable in order to redirect the user
-    // to the checkout page once (s)he succesfully authenticates
     $_SESSION['checkout'] = 1;
-
     redirect_with_error("login", "To continue, please log in prior to proceeding to checkout.");
 }
 
-$db = DBManager::get_instance();
-$query = "SELECT SC.`isbn` AS `isbn`, SC.`book_title` AS `title`,
-                 SC.`book_author` AS `author`, SC.`price` AS `price`,
-                 SC.`quantity` AS `quantity`, B.`image_url_S` AS `image`
-                 FROM `shopping_carts` AS SC INNER JOIN `books` AS B ON SC.`isbn` = B.`isbn`
-                 WHERE SC.`user_id` = ?";
-$cart = $db->exec_query("SELECT", $query, [$user_id], "i");
+$cart = get_cart($user_id);
 
-if (count($cart) > 0) {
-    $order = array();
-    foreach($cart as $book) {
-        $order[] = array(
-            'isbn'     => $book['isbn'],
-            'title'    => $book['title'],
-            'author'   => $book['author'],
-            'price'    => $book['price'],
-            'quantity' => $book['quantity'],
-            'image'    => $book['image']
-        );
-    }
+// Check if there was an error retrieving the cart
+if ($cart === NULL) {
+    Logger::getInstance()->error('[ERROR] Failed to retrieve cart for user.', ['userid' => $user_id]);
+    redirect_with_error("error", "Something went wrong while fetching your cart. Please try again later.");
+    exit();
 }
 
-$regexes = [
-    'firstname' => "[\\-'A-Z a-zÀ-ÿ]+",
-    'lastname' => "[\\-'A-Z a-zÀ-ÿ]+",
-    'address' => "[\\-'A-Z a-zÀ-ÿ0-9.,]+",
-    'city' => "[\\-'A-Z a-zÀ-ÿ.]+",
-    'postalcode' => "\d+",
-    'country' => "[\\-'A-Z a-z]+",
-    'cardnumber' => "\b\d{4}[\\- ]?\d{4}[\\- ]?\d{4}[\\- ]?\d{4}\b",
-    'cardholder' => "[\\-'A-Z a-zÀ-ÿ.]+",
-    'cvv' => "\d{3}",
-];
+// Check if the cart is empty
+if (empty($cart)) {
+    Logger::getInstance()->warning('[CHECKOUT] Failed attempt: User tried to insert a shipping address with an empty cart.', ['userid' => $user_id]);
+    redirect_with_error(
+        "error", 
+        "Your cart is empty. Please add at least one book before proceeding to checkout."
+    );
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -72,58 +51,64 @@ $regexes = [
         </div>
     </header>
     <div class="content">
-    <div class="payment-form">
+        <div class="payment-form">
             <h2>Payment method</h2>
-            <form action="process_order.php" method="POST">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required><br>
+            <form action="../php/process_payment_method.php" method="POST">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="firstname" name="firstname" required pattern="<?php echo $regexes['firstname']; ?>"><br>
 
-                <label for="address">Billing address:</label>
-                <textarea id="address" name="address" rows="1" required></textarea><br>
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="lastname" name="lastname" required pattern="<?php echo $regexes['lastname']; ?>"><br>
+
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" rows="1" required pattern="<?php echo $regexes['address']; ?>"></textarea><br>
+
+                <label for="city">City:</label>
+                <textarea id="city" name="city" rows="1" required placeholder='Pisa' pattern="<?php echo $regexes['city']; ?>"></textarea><br>
+
+                <label for="postal_code">Postal Code:</label>
+                <input type="text" id="postal_code" name="postal_code" required placeholder='12345' pattern="<?php echo $regexes['postalcode']; ?>"><br>
+
+                <label for="country">Country:</label>
+                <textarea id="country" name="country" rows="1" required placeholder='Italy' pattern="<?php echo $regexes['country']; ?>"></textarea><br>
 
                 <label for="card_number">Credit Card Number:</label>
-                <input type="text" id="card_number" name="card_number" required><br>
+                <input type="text" id="card_number" name="card_number" required placeholder='XXXX-XXXX-XXXX-XXXX' pattern="<?php echo $regexes['cardnumber']; ?>"><br>
 
                 <label for="expiry_date">Expiry Date:</label>
                 <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required><br>
 
                 <label for="cvv">CVV:</label>
-                <input type="text" id="cvv" name    ="cvv" required><br><br>
+                <input type="text" id="cvv" name="cvv" required pattern="<?php echo $regexes['cvv']; ?>"><br><br>
 
                 <input type="submit" value="Use Payment method">
             </form>
         </div>
         <div id="order-summary">
-        <h2>Order Summary</h2>
+            <h2>Order Summary</h2>
             <?php
-                // Check if the order array is not empty
-                if (!empty($order)) {
-                    $total = 0;
-                    echo '<table id="cart">';
-                    echo '<tr><th></th><th>Title</th><th>Author</th><th>Price</th><th>Quantity</th></tr>';
-                    foreach ($order as $item) {
-                        echo '<tr>';
-                        echo '<td>';
-                        echo '<img src="' . $item['image'] . '" alt="' . $item['title'] .'">';
-                        echo '</td>';
-                        echo '<td>' . $item['title']    . '</td>';
-                        echo '<td>' . $item['author']   . '</td>';
-                        echo '<td>' . $item['price']    . ' $</td>';
-                        echo '<td>' . $item['quantity'] . '</td>';
-                        echo '</tr>';
-                        $total += intval($item['price']) * intval($item['quantity']);
-                    }
-                    echo '<tfoot>';
+                $total = 0;
+                echo '<table id="cart">';
+                echo '<tr><th></th><th>Title</th><th>Author</th><th>Price</th><th>Quantity</th></tr>';
+                foreach ($cart as $item) {
                     echo '<tr>';
-                    echo '<td colspan="3" class="total">Total:</td>';
-                    echo '<td id="total">' . $total . ' $</td>';
+                    echo '<td>';
+                    echo '<img src="' . $item['image'] . '" alt="' . $item['title'] .'">';
+                    echo '</td>';
+                    echo '<td>' . $item['title']    . '</td>';
+                    echo '<td>' . $item['author']   . '</td>';
+                    echo '<td>' . $item['price']    . ' $</td>';
+                    echo '<td>' . $item['quantity'] . '</td>';
                     echo '</tr>';
-                    echo '</tfoot>';
-                    echo '</table>';
-                } else {
-                    // If the order array is empty, display a message
-                    echo '<p>No items in the order.</p>';
+                    $total += intval($item['price']) * intval($item['quantity']);
                 }
+                echo '<tfoot>';
+                echo '<tr>';
+                echo '<td colspan="3" class="total">Total:</td>';
+                echo '<td id="total">' . $total . ' $</td>';
+                echo '</tr>';
+                echo '</tfoot>';
+                echo '</table>';
             ?>
         </div>
     </div>
@@ -133,7 +118,7 @@ $regexes = [
         <p>Book Emporium is dedicated to providing a curated selection of high-quality books across various genres. We believe in the power of literature to inspire, educate, and entertain. Explore our collection and find your next favorite read!</p>
     </section>
     <footer>
-        <p>&copy; 2023 Book Emporium. All rights reserved.</p>
+        <p>&copy; <?php echo date("Y"); ?> Book Emporium. All rights reserved.</p>
     </footer>
 </body>
 </html>
