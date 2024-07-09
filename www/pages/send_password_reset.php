@@ -8,6 +8,12 @@
         <link rel="stylesheet" href="../css/register.css">
     </head>
     <body>
+        <header class="header">
+            <div class="header-left" onclick="location.href='./../index.php';">
+                <h1>Book Emporium</h1>
+                <p>Your Source for Great Reads</p>
+            </div>
+        </header>
         <div class="container">
             <h2>Password Reset</h2>
             <div class="error-message" id="error-message" style="display:none;">
