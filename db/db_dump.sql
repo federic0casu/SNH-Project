@@ -42,8 +42,8 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `is_verified` int NOT NULL,
   `verif_token` varchar(255),
-  `reset_token` varchar(255),
-  `reset_valid_until` timestamp NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_valid_until` timestamp DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
