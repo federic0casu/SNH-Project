@@ -54,7 +54,7 @@ if ($user_id < 0) {
                     <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
                     <input class="logout-button" type="submit" value="Logout">
                 </form>
-                <button class="history-button" onclick="location.href='order_history.php';">Order History</button>
+                <button class="history-button" onclick="location.href='pages/order_history.php';">Order History</button>
             <?php endif; ?>
             <button class="books-button" onclick="location.href='pages/books.php';">Books</button>
             <button class="cart-button" onclick="location.href='pages/shopping_cart.php';">Cart</button>
