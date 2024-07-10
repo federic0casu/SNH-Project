@@ -9,6 +9,18 @@ if ($user_id < 0) {
     exit();
 }
 
+//Guard against CSRF attacks
+if(!isset($_POST["csrf_token"]) || !is_string($_POST["csrf_token"])){
+    $logger->warning('[UPDATE_CART] UPDATE_CART called without a CSRF token.');
+    redirect_to_index();
+}
+
+if(!verify_and_regenerate_csrf_token($_POST["csrf_token"])){
+    $logger->warning('[UPDATE_CART] CSRF tokens do not match.', 
+                     ['form_token' => $_POST["csrf_token"]]);
+    redirect_to_index();
+}
+
 // Get the order_id from the session
 $order_id = $_SESSION['order_id'];
 

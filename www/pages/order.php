@@ -119,6 +119,7 @@ if (empty($cart)) {
                 ?>
                 <form action="../php/process_order.php" method="POST">
                     <br>
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
                     <input type="submit" value="<<BUY NOW>>">
                 </form>
             </div>
