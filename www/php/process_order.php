@@ -61,6 +61,15 @@ if (empty($cart)) {
     exit();
 }
 
+//Simulate credit card payment
+if(!validate_payment($order['card_number'],$order['expiry_date'],$order['cvv'])){
+    Logger::getInstance()->warning('[CHECKOUT] Failed attempt: Credit card transaction rejected.', ['userid' => $user_id]);
+    redirect_with_error(
+        "error", 
+        "Your credit card transaction did not complete successfully."
+    );
+}
+
 // Insert order items into order_items table
 if (insert_order_items($cart, $order_id, $user_id)) {
     send_order_summary($user_id, $order_id);

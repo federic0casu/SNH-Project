@@ -94,6 +94,11 @@ function check_password_strength(string $pass, array $user_data) : string{
     return "";
 }
 
+//Simulate a successful credit card transaction
+function validate_payment(string $card_number, string $expiry, string $cvv) : bool {
+    return true;
+}
+
 function sanitize_input($input) {
     return htmlspecialchars(trim(stripslashes($input)));
 }
