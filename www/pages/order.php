@@ -61,13 +61,15 @@ if (empty($cart)) {
 </head>
 <body>
     <header class="header">
-        <div class="header-left">
+        <div class="header-left" onclick="location.href='../index.php';">
             <h1>Book Emporium</h1>
             <p>Your Source for Great Reads</p>
         </div>
         <div class="header-right">
-            <button class="home-button" onclick="location.href='../../index.php';">Home</button>
-            <button class="login-button" onclick="location.href='login.php';">Login</button> 
+            <form action="../php/utils/logout.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                <input class="logout-button" type="submit" value="Logout">
+            </form>
             <button class="register-button" onclick="location.href='shopping_cart.php';">Cart</button> 
         </div>
     </header>

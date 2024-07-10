@@ -55,6 +55,7 @@ if ($user_id < 0) {
                     <input class="logout-button" type="submit" value="Logout">
                 </form>
             <?php endif; ?>
+            <button class="books-button" onclick="location.href='pages/books.php';">Books</button>
             <button class="cart-button" onclick="location.href='pages/shopping_cart.php';">Cart</button>
         </div>
     </header>

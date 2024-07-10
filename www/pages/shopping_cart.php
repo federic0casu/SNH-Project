@@ -44,12 +44,11 @@ $total = 0.0;
 </head>
 <body>
     <header class="header">
-        <div class="header-left">
+        <div class="header-left" onclick="location.href='./../index.php';">
             <h1>Book Emporium</h1>
             <p>Your Source for Great Reads</p>
         </div>
         <div class="header-right">
-            <button class="home-button" onclick="location.href='../../index.php';">Home</button>
             <?php if (!$is_user_logged): ?>
                 <button class="login-button" onclick="location.href='login.php';">Login</button>
                 <button class="register-button" onclick="location.href='register.php';">Register</button>
@@ -60,7 +59,8 @@ $total = 0.0;
                     <input class="logout-button" type="submit" value="Logout">
                 </form>
                 <button class="history-button" onclick="location.href='order_history.php';">Order History</button>
-            <?php endif; ?>  
+            <?php endif; ?> 
+            <button class="books-button" onclick="location.href='books.php';">Books</button>
         </div>
     </header>
 
