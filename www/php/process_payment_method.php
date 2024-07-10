@@ -61,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!check_field_presence($field)) {
             redirect_with_error(
                 "error", 
-                "To proceed with your order, please enter your {$name} before continuing to checkout."
+                "To proceed with your order, please enter your {$name} before continuing to checkout.",
+                "checkout.php"
             );
             exit();
         }
