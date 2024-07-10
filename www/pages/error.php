@@ -56,9 +56,17 @@
             } else {
                 echo "<p>We're sorry, but an unexpected error occurred. Please try again later.</p>";
             }
+
+            // Check if the 'link' parameter is set in the URL
+            if (isset($_GET['link'])) {
+                // Sanitize the link to prevent XSS
+                $link = htmlspecialchars($_GET['link'], ENT_QUOTES, 'UTF-8');
+                echo '<p><a href="' . $link . '">Click here to continue</a></p>';
+            } else {
+                echo '<p><a href="../index.php">Go back to home page</a></p>';
+            }
         ?>
-        <!-- <p>If the problem persists, contact <a href="mailto:support@bookemporium.com">support@bookemporium.com</a>.</p> -->
-        <p><a href="../index.php">Go back to home page</a></p>
+        <p>If the problem persists, contact <a href="mailto:bookemporium.snh@gmail.com">support@bookemporium</a>.</p>
     </div>
 
 </body>

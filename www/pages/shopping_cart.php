@@ -111,7 +111,7 @@ $total = 0.0;
     </section>
 
     <footer>
-        <p>&copy; 2023 Book Emporium. All rights reserved.</p>
+        <p>&copy; <?php echo date("Y"); ?> Book Emporium. All rights reserved.</p>
     </footer>
 </body>
 </html>
