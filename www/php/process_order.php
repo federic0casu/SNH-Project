@@ -1,8 +1,6 @@
 <?php
 include_once '../php/utils/config_and_import.php';
 
-session_start();
-
 // Check that the user is logged in
 $user_id = get_logged_user_id();
 if ($user_id < 0) {
@@ -31,7 +29,6 @@ if (empty($order)) {
     exit();
 }
 
-
 // Fetch the cart items
 $cart = get_cart($user_id);
 
@@ -54,11 +51,13 @@ if (empty($cart)) {
 
 // Insert order items into order_items table
 if (insert_order_items($cart, $order_id, $user_id)) {
+    send_order_summary($user_id, $order_id);
     // Success message or further processing
-    echo "Order placed successfully!";
+    echo "Order placed successfully!<br>";
     echo "<a href=\"../index.php\">Go back to home page</a>";
 } else {
     // Handle insertion failure
-    echo "Failed to insert order items. Please try again.";
+    echo "Failed to insert order items. Please try again.<br>";
+    echo "<a href=\"../index.php\">Go back to home page</a>";
 }
 ?>

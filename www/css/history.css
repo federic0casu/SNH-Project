@@ -1,0 +1,34 @@
+.order {
+    padding: 2%;
+    margin: 1%;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.order h3 {
+    margin: 0;
+    padding-bottom: 1%;
+    font-size: 1.2em;
+}
+.order p {
+    margin: 0.5% 0;
+}
+.order-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1%;
+}
+.order-items th, .order-items td {
+    border: 1px solid #ddd;
+    padding: 1%;
+    text-align: center;
+    font-size: 0.9em;
+}
+.order-items th {
+    background-color: #f2f2f2;
+    text-align: center;
+}
+.order-items td img {
+    max-width: 50px;
+    border-radius: 5px;
+}

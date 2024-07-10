@@ -1,6 +1,3 @@
-version: '3'
-
-
 services:
   
   db: 
@@ -11,6 +8,8 @@ services:
       - MYSQL_DATABASE=book_shop_db
       - MYSQL_USER=book_shop
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - 3306:3306
     volumes:
       - "./../db:/docker-entrypoint-initdb.d" # this is how we persist a sql db even when container stops
   
@@ -30,6 +29,8 @@ services:
     ports:
       - 80:80
       - 443:443 # for ssl traffic
+    volumes:
+      - ./../www:/var/www/bookshop
   
   phpmyadmin:
     container_name: phpmyadmin

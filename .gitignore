@@ -1,2 +1,3 @@
 docker/.env
 docker/apache-conf/*.pem
+www/books/venv
