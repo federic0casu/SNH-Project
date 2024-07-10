@@ -34,7 +34,7 @@ if($user_id > 0){
                 <input type="submit" value="Login">
             </form>
             <p>Don't have an account? <a href="register.php">Register here</a>.</p>
-            <p>Lost you password? <a href="send_password_reset.php">Reset it here</a>.</p>
+            <p>Lost your password? <a href="send_password_reset.php">Reset it here</a>.</p>
         </div>
         <script>
             const queryString = window.location.search;
