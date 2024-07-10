@@ -1,40 +1,31 @@
-<?php
-include_once "../php/utils/config_and_import.php";
-
-//Check that the user isn't already logged in
-$user_id = get_logged_user_id();
-if($user_id > 0){
-    redirect_to_index();
-}
-?>
-
 <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login</title>
+        <title>Password Reset</title>
         <link rel="stylesheet" href="../css/style.css">
-        <link rel="stylesheet" href="../css/login.css">
+        <link rel="stylesheet" href="../css/register.css">
     </head>
     <body>
+        <header class="header">
+            <div class="header-left" onclick="location.href='./../index.php';">
+                <h1>Book Emporium</h1>
+                <p>Your Source for Great Reads</p>
+            </div>
+        </header>
         <div class="container">
-            <h2>Login</h2>
+            <h2>Password Reset</h2>
             <div class="error-message" id="error-message" style="display:none;">
-                We have a little problem. Please make sure you are logged in.
+                An error was encountered.
             </div>
             <br>
-            <form action="../php/login.php" method="post">
+            <form action="../php/send_password_reset.php" method="post">
                 <label for="username">Username:</label><br>
                 <input type="text" id="username" name="username" required><br><br>
-
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" required><br><br>
-
-                <input type="submit" value="Login">
+    
+                <input type="submit" value="Reset">
             </form>
-            <p>Don't have an account? <a href="register.php">Register here</a>.</p>
-            <p>Lost your password? <a href="send_password_reset.php">Reset it here</a>.</p>
         </div>
         <script>
             const queryString = window.location.search;

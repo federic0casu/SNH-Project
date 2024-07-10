@@ -42,13 +42,16 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `is_verified` int NOT NULL,
   `verif_token` varchar(255),
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_valid_until` timestamp DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
-INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'f.casu1@studenti.unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, '2023-11-07 19:51:03');
+INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `reset_token`, `reset_valid_until`, `created_at`) VALUES (1, 'federic0', 'Federico', 'Casu', 'f.casu1@studenti.unipi.it', '$2y$10$lAoR6kqC5LKP6K6szeHe8Ogjs.GDktierrw5Zu6ubCk59qAUxDHaS', 1, NULL, NULL, NULL, '2023-11-07 19:51:03');
+INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `password`, `is_verified`, `verif_token`, `reset_token`, `reset_valid_until`, `created_at`) VALUES (2, 'a', 'a', 'a', 'molto.falso@gmail.com', '$2y$10$Gq73GeIRu9439C0IxaDUXORPMPqB/tZEg9Lb9u6Ewn8aFLhZs/JCO', 1, NULL, 'pippo', '2025-11-07 19:51:03',  '2023-11-07 19:51:03');
 
 --
 -- AUTO_INCREMENT for table `users`
