@@ -86,8 +86,18 @@ $total = 0.0;
                 <td> <?php echo $item['price']; ?> $</td>
                 <td> <?php echo $item['quantity']; ?></td>
                 <td>
-                    <button class="action" onclick="location.href='../php/update_cart.php?isbn=<?php echo urlencode($item['isbn']); ?>&action=1'"><h2> + </h2></button>
-                    <button class="action" onclick="location.href='../php/update_cart.php?isbn=<?php echo urlencode($item['isbn']); ?>&action=2'"><h2> - </h2></button>
+                    <form action="../php/update_cart.php" method="post">
+                        <input type="hidden" name="isbn" value="<?php echo urlencode($item['isbn']); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                        <input type="hidden" name="action" value="1">
+                        <input type="submit" value="+">
+                    </form>
+                    <form action="../php/update_cart.php" method="post">
+                        <input type="hidden" name="isbn" value="<?php echo urlencode($item['isbn']); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                        <input type="hidden" name="action" value="2">
+                        <input type="submit" value="-">
+                    </form>
                 </td>
             </tr>
         <?php $total += $item['price'] * $item['quantity']; ?>

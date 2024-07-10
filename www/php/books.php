@@ -1,5 +1,5 @@
 <?php
-include_once 'utils/db_manager.php';
+include_once 'utils/config_and_import.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -17,7 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'isbn'   => $book['isbn'],
                 'title'  => $book['book_title'],
                 'author' => $book['book_author'],
-                'image'  => $book['image_url_M']
+                'image'  => $book['image_url_M'],
+                'csrf_token' => generate_or_get_csrf_token()
             );
         }
     } else {

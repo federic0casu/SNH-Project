@@ -69,7 +69,12 @@ if ($user_id < 0) {
                 <img src="<?php echo $book['image_url_L']; ?>" alt="<?php echo $book['book_title']; ?>">
                 <h3><?php echo $book['book_title']; ?></h3>
                 <p>Author: <?php echo $book['book_author']; ?></p>
-                <button onclick="location.href='php/update_cart.php?isbn=<?php echo urlencode($book['isbn']); ?>&action=1'">Add to Cart</button>
+                <form action="php/update_cart.php" method="post">
+                    <input type="hidden" name="isbn" value="<?php echo urlencode($book['isbn']); ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                    <input type="hidden" name="action" value="1">
+                    <input type="submit" value="Add to Cart">
+                </form>
             </div>
         <?php endforeach; ?>
 
