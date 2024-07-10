@@ -79,6 +79,7 @@ input[type="submit"]:hover {
 .login-button,
 .register-button,
 .cart-button,
+.books-button,
 .home-button,
 .history-button,
 input[type="submit"].logout-button {
