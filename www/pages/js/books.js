@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('form').submit(function (e) {
+    $('#search_books_form').submit(function (e) {
         // Prevent the form from submitting in the traditional way
         e.preventDefault();
 
