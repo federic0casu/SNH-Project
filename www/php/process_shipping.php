@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postal_code = sanitize_input($_POST['postal_code']);
     $country     = sanitize_input($_POST['country']);
 
-    $order = insert_shipping_address($order, $address, $city, $postal_code, $country);
+    $order = insert_shipping_address($_SESSION['order_id'], $address, $city, $postal_code, $country);
 
     if ($order > 0 && $_SESSION['order_id'] == $order) {
         Logger::getInstance()->debug('[CHECKOUT] User succesfully inserted payment method.', ['userid' => $user_id, 'order' => $order]);

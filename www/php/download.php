@@ -21,7 +21,7 @@ if (!isset($_GET['isbn']) || !is_string($_GET['isbn'])) {
 }
 
 //Sanitize isbn to only include numbers
-$isbn = preg_replace("/[^0-9]/", "", $_GET['isbn']);
+$isbn = preg_replace("/[^A-Za-z0-9]/", "", $_GET['isbn']);
 
 //Retrieve info from the db
 $query = "SELECT * 
@@ -33,7 +33,7 @@ $query_rows = $db->exec_query("SELECT", $query, [$user_id, $isbn], "is");
 
 //Check that the user has bought the book
 if(count($query_rows) < 1){
-    $logger->warning('[DOWNLOAD] User attempt to download a book they did not buy.', ['user_id' => $user_id]);
+    $logger->warning('[DOWNLOAD] User attempt to download a book they did not buy.', ['user_id' => $user_id,'isbn' => $isbn]);
     redirect_to_index();
 }
 

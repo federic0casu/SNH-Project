@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('form').submit(function (e) {
+    $('#search_books_form').submit(function (e) {
         // Prevent the form from submitting in the traditional way
         e.preventDefault();
 
@@ -34,7 +34,12 @@ function updateResults(response) {
                 <img src="${book.image}" alt="${book.title}">
                 <h3>${book.title}</h3>
                 <p>Author: ${book.author}</p>
-                <button onclick="location.href='../php/update_cart.php?isbn=${book.isbn}&action=1'">Add to Cart</button>
+                <form action="../php/update_cart.php" method="post">
+                    <input type="hidden" name="isbn" value="${book.isbn}">
+                    <input type="hidden" name="csrf_token" value="${book.csrf_token}">
+                    <input type="hidden" name="action" value="1">
+                    <input type="submit" value="Add to Cart">
+                </form>
             `);
 
             row.append(bookDiv);
