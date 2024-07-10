@@ -79,6 +79,10 @@ class DBManager{
             return $statement->insert_id;
         }
 
+        if ($query_type == "UPDATE" || $query_type == "DELETE") {
+            return $statement->affected_rows;
+        }
+
         //Return the query result depending on the type of operation performed
         if ($query_type == "SELECT") {
             $query_result = $statement->get_result();

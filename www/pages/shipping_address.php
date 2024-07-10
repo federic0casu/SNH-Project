@@ -1,8 +1,6 @@
 <?php
 include_once '../php/utils/config_and_import.php';
 
-session_start();
-
 $user_id = get_logged_user_id();
 if ($user_id < 0 || !isset($_SESSION['order_id'])) {
     redirect_with_error(
@@ -50,8 +48,11 @@ if (empty($cart)) {
         </div>
         <div class="header-right">
             <button class="home-button" onclick="location.href='../../index.php';">Home</button>
-            <button class="login-button" onclick="location.href='login.php';">Login</button> 
-            <button class="register-button" onclick="location.href='shopping_cart.php';">Cart</button> 
+            <form action="../php/utils/logout.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                <input class="logout-button" type="submit" value="Logout">
+            </form>
+            <button class="cart-button" onclick="location.href='shopping_cart.php';">Cart</button> 
         </div>
     </header>
     <div class="content">

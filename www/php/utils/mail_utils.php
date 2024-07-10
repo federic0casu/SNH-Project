@@ -8,18 +8,17 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
 include_once 'logger.php';
+include_once 'db_utils.php';
 
-function send_verification_mail($email, $receiver_username, $verification_token) : void {
-    $message = "Thanks for joining BookEmporium!<br>Click on the following link to verify your email address and complete your registration: https://{$_SERVER['SERVER_NAME']}/php/verify.php?verification_token={$verification_token}";
-    send_mail($email, $receiver_username, "BookEmporium Verification", $message);
+function send_verification_mail($email, $receiver_username, $verification_token) : bool {
+    $message = "Thanks for joining BookEmporium!<br>" . 
+            "Click on the following link to verify your email address and complete your registration: " . 
+            "https://{$_SERVER['SERVER_NAME']}/php/verify.php?verification_token={$verification_token}";
+    return send_mail($email, $receiver_username, "BookEmporium Verification", $message);
 }
 
-function send_mail($email, $name, $subject, $message) : void{
-    //Get Logger instance 
-    $logger = Logger::getInstance();
-    
+function send_mail($email, $name, $subject, $message) : bool {    
     $mail = new PHPMailer(true);
-    $error = "";
 
     try {
         //enable verbose debug output (2 for detailed debug output)
@@ -28,7 +27,6 @@ function send_mail($email, $name, $subject, $message) : void{
         //using the SMTP protocol to send the email
         $mail->isSMTP();
 
-        $mail->SMTPAuth = true;
         $mail->Host     = 'smtp.gmail.com';
         $mail->Username = getenv('MAIL_ADDRESS');
         $mail->Password = getenv('MAIL_PASSWORD');
@@ -51,32 +49,77 @@ function send_mail($email, $name, $subject, $message) : void{
         //receiver email address and name
         $mail->addAddress($email, $name);  
 
-        //by setting IsHTML(true), we inform PHPMailer that the
+        //by setting isHTML(true), we inform PHPMailer that the
         //email will include HTML markup.
-        $mail->IsHTML(true);
+        $mail->isHTML(true);
 
         $mail->Subject = $subject;
         $mail->Body = $message;
 
-        $error = "OK";
-
         // Attempt to send the email
         if (!$mail->send()) {
             $error = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-            $logger->warning('[SEND_MAIL] Failed attempt', ['result' => $error, 'to' => $email]);
+            Logger::getInstance()->warning('[SEND_MAIL] Failed attempt', ['result' => $error, 'to' => $email]);
+            return false;
         }
 
+        return true;
     } catch (Exception $e) {
-        $error = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        $logger->warning('[SEND_MAIL] Failed attempt', ['result' => $error, 'to' => $email]);
+        $error = "Message could not be sent. Mailer Error: {$e->getMessage()}";
+        Logger::getInstance()->error('[ERROR] Trace: send_mail()', ['error' => $error, 'to' => $email]);
+        return false;
     }
 
 }
 
 //Example of usage
-//$email = 'f.casu1@studenti.unipi.it';
-//$name = 'Federico Casu';
+//$email = 'recipient@email.com';
+//$name = 'FirstName LastName';
 //$subject = 'PHPMailer test';
 //$message = 'PHPMailer the awesome Package\nPHPMailer is working fine for sending mail\nThis is a tutorial to guide you on PHPMailer integration';
 //sendMail($mail, $name, $subject, $message);
+
+// Function to send order summary email
+function send_order_summary($user_id, $order_id) : bool {
+    $order = get_order_details($user_id, $order_id);
+    if (is_null($order) || empty($order)) {
+        Logger::getInstance()->error("[ERROR] Order details not found for user_id: $user_id, order_id: $order_id");
+        return false;
+    }
+
+    $email = get_email_from_user_id($user_id);
+    $name = get_full_name_from_user_id($user_id);
+    if ($email === "" || $name === "")
+        return false;
+
+    // Prepare email content
+    $subject = "Book Emporium - Order Summary - Order #$order_id";
+
+    $message  = "<p>Here is the summary of your order:</p>";
+    $message .= "<ul>";
+    
+    foreach ($order['items'] as $item) {
+        $message .= "<li><strong>{$item['book_title']}</strong> by {$item['book_author']} (ISBN: {$item['isbn']})</li>";
+        $message .= "<ul>";
+        $message .= "<li>Price: {$item['price']}</li>";
+        $message .= "<li>Quantity: {$item['quantity']}</li>";
+        $message .= "</ul>";
+    }
+
+    $message .= "</ul>";
+    $message .= "<p><b>Total Price</b>:<br>{$order['total_price']}</p>";
+    $message .= "<p><b>Billing Address</b>:<br>{$order['billing_address']}<br>{$order['billing_city']}, {$order['billing_postal_code']}<br>{$order['billing_country']}</p>";
+    $masked_card_number = '**** **** **** ' . substr($order['card_number'], -4);
+    $message .= "<p><b>Payment Details</b>:<br>Card Number: {$masked_card_number}<br>Expiry Date: {$order['expiry_date']}<br>Name: {$order['billing_first_name']} {$order['billing_last_name']}</p>";
+    $message .= "<p><b>Shipping Address</b>:<br>{$order['shipping_address']}<br>{$order['shipping_city']}, {$order['shipping_postal_code']}<br>{$order['shipping_country']}</p>";
+    $message .= "<p><b>Status</b>:<br>{$order['status_description']}</p>";
+    $message .= "<p>Thank you for shopping with us!</p><br>";
+    $message .= "<p><b>Book Emporium</b> is dedicated to providing a curated selection of high-quality books across various genres. We believe in the power of literature to inspire, educate, and entertain. Explore our collection and find your next favorite read!</p>";
+
+    // Send email
+    if (!send_mail($email, $name, $subject, $message))
+        return false;
+
+    return true;
+}
 ?>
