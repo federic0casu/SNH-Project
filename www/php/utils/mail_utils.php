@@ -17,6 +17,10 @@ function send_verification_mail($email, $receiver_username, $verification_token)
     return send_mail($email, $receiver_username, "BookEmporium Verification", $message);
 }
 
+function send_alert_mail($email, $message) : bool {
+    return send_mail($email, "", "BookEmporium Alert", $message);
+}
+
 function send_reset_mail($email, $receiver_username, $reset_token) : void {
     $message = "Click on the following link to reset your password: https://{$_SERVER['SERVER_NAME']}/pages/password_reset.php?reset_token={$reset_token}".
                "<br>The link will only be valid for the next 30 minutes.";
