@@ -1,6 +1,9 @@
 <?php
 include_once "utils/config_and_import.php";
 
+//Get Logger instance 
+$logger = Logger::getInstance();
+
 // Get user id
 $user_id = get_logged_user_id();
 
@@ -22,12 +25,24 @@ if ($user_id < 0) {
     }
 }
 
-$isbn   = $_GET['isbn'];
-$action = intval($_GET['action']);
+$isbn   = $_POST['isbn'];
+$action = intval($_POST['action']);
 
-if (!($_SERVER['REQUEST_METHOD'] === 'GET') || !isset($isbn) || !isset($action)) {
+if (!($_SERVER['REQUEST_METHOD'] === 'POST') || !isset($isbn) || !isset($action)) {
     redirect_to_page("error");
-} 
+}
+
+//Guard against CSRF attacks
+if(!isset($_POST["csrf_token"]) || !is_string($_POST["csrf_token"])){
+    $logger->warning('[UPDATE_CART] UPDATE_CART called without a CSRF token.');
+    redirect_to_index();
+}
+
+if(!verify_and_regenerate_csrf_token($_POST["csrf_token"])){
+    $logger->warning('[UPDATE_CART] CSRF tokens do not match.', 
+                     ['form_token' => $_POST["csrf_token"]]);
+    redirect_to_index();
+}
 
 $db = DBManager::get_instance();
 $query = "SELECT * FROM `books` WHERE `isbn` = ?";

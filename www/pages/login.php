@@ -18,6 +18,12 @@ if($user_id > 0){
         <link rel="stylesheet" href="../css/login.css">
     </head>
     <body>
+        <header class="header">
+            <div class="header-left" onclick="location.href='../index.php';">
+                <h1>Book Emporium</h1>
+                <p>Your Source for Great Reads</p>
+            </div>
+        </header>
         <div class="container">
             <h2>Login</h2>
             <div class="error-message" id="error-message" style="display:none;">

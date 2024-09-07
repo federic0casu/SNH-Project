@@ -67,6 +67,18 @@ if (!check_shipping_address($_SESSION['order_id'])) {
     exit();
 }
 
+//Guard against CSRF attacks
+if(!isset($_POST["csrf_token"]) || !is_string($_POST["csrf_token"])){
+    $logger->warning('[UPDATE_CART] UPDATE_CART called without a CSRF token.');
+    redirect_to_index();
+}
+
+if(!verify_and_regenerate_csrf_token($_POST["csrf_token"])){
+    $logger->warning('[UPDATE_CART] CSRF tokens do not match.', 
+                     ['form_token' => $_POST["csrf_token"]]);
+    redirect_to_index();
+}
+
 // Get the order_id from the session
 $order_id = $_SESSION['order_id'];
 
@@ -105,6 +117,15 @@ if (empty($cart)) {
         "Your cart is empty. Please add at least one book before proceeding to checkout."
     );
     exit();
+}
+
+//Simulate credit card payment
+if(!validate_payment($order['card_number'],$order['expiry_date'],$order['cvv'])){
+    Logger::getInstance()->warning('[CHECKOUT] Failed attempt: Credit card transaction rejected.', ['userid' => $user_id]);
+    redirect_with_error(
+        "error", 
+        "Your credit card transaction did not complete successfully."
+    );
 }
 
 // Insert order items into order_items table

@@ -44,12 +44,11 @@ $total = 0.0;
 </head>
 <body>
     <header class="header">
-        <div class="header-left">
+        <div class="header-left" onclick="location.href='./../index.php';">
             <h1>Book Emporium</h1>
             <p>Your Source for Great Reads</p>
         </div>
         <div class="header-right">
-            <button class="home-button" onclick="location.href='../../index.php';">Home</button>
             <?php if (!$is_user_logged): ?>
                 <button class="login-button" onclick="location.href='login.php';">Login</button>
                 <button class="register-button" onclick="location.href='register.php';">Register</button>
@@ -60,7 +59,8 @@ $total = 0.0;
                     <input class="logout-button" type="submit" value="Logout">
                 </form>
                 <button class="history-button" onclick="location.href='order_history.php';">Order History</button>
-            <?php endif; ?>  
+            <?php endif; ?> 
+            <button class="books-button" onclick="location.href='books.php';">Books</button>
         </div>
     </header>
 
@@ -86,8 +86,18 @@ $total = 0.0;
                 <td> <?php echo $item['price']; ?> $</td>
                 <td> <?php echo $item['quantity']; ?></td>
                 <td>
-                    <button class="action" onclick="location.href='../php/update_cart.php?isbn=<?php echo urlencode($item['isbn']); ?>&action=1'"><h2> + </h2></button>
-                    <button class="action" onclick="location.href='../php/update_cart.php?isbn=<?php echo urlencode($item['isbn']); ?>&action=2'"><h2> - </h2></button>
+                    <form action="../php/update_cart.php" method="post">
+                        <input type="hidden" name="isbn" value="<?php echo urlencode($item['isbn']); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                        <input type="hidden" name="action" value="1">
+                        <input type="submit" value="+">
+                    </form>
+                    <form action="../php/update_cart.php" method="post">
+                        <input type="hidden" name="isbn" value="<?php echo urlencode($item['isbn']); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
+                        <input type="hidden" name="action" value="2">
+                        <input type="submit" value="-">
+                    </form>
                 </td>
             </tr>
         <?php $total += $item['price'] * $item['quantity']; ?>

@@ -410,7 +410,7 @@ function insert_shipping_address($order_id, $address, $city, $postal_code, $coun
         $db->rollback();
 
         Logger::getInstance()->error('[ERROR] Trace: insert_shipping_address()', ['message' => $e->getMessage(), 'order_id' => $order_id]);
-        redirect_with_error("error", "Something went wrong while processing your shipping address. Please try again later.");
+        return -1;
     }
 }
 

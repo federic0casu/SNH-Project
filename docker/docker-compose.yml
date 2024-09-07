@@ -8,6 +8,7 @@ services:
       - MYSQL_DATABASE=book_shop_db
       - MYSQL_USER=book_shop
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - 3306:3306
     volumes:
