@@ -22,9 +22,12 @@ function redirect_to_page(string $page_name, string $query=NULL) : void{
 
 //Used as a wrapper to redirect_to_page whenever an error
 //query is needed
-function redirect_with_error(string $page_name, string $error_message) : void{
+function redirect_with_error(string $page_name, string $error_message, string $link=NULL) : void{
     //Urlencode the error message, and call the redirect function
-    redirect_to_page($page_name, "error=".urlencode($error_message));
+    if ($link === NULL)
+        redirect_to_page($page_name, "error=".urlencode($error_message));
+    else
+    redirect_to_page($page_name, "error=".urlencode($error_message)."&link=".urldecode($link));
 }
 
 //Redirect to the index page

@@ -2,11 +2,53 @@
 include_once '../php/utils/config_and_import.php';
 
 $user_id = get_logged_user_id();
-if ($user_id < 0 || !isset($_SESSION['order_id'])) {
-    redirect_with_error(
-        "error", 
-        "To continue, please make sure you're logged in and you have inserted a valid payment method."
+if ($user_id < 0) {
+    // Set a session variable in order to redirect the user
+    // to the checkout page once (s)he successfully authenticates
+    $_SESSION['checkout'] = 1;
+    Logger::getInstance()->warning(
+        '[CHECKOUT] Unauthorized Access Attempt: User not logged in. Action: Inserting Shipping Address. Suspected malicious attempt.',
+        ['user_id' => $user_id]
     );
+    redirect_with_error("login", "To continue, please log in before proceeding to checkout.");
+    exit();
+}
+
+// Check if the user provides a valid order_id.
+if (!isset($_SESSION['order_id'])) {
+    Logger::getInstance()->warning(
+        '[CHECKOUT] Invalid Checkout Sequence: User attempted to insert shipping address without having a valid `order_id`.',
+        ['user_id' => $user_id]
+    );
+    redirect_with_error("error", "To continue, please start a valid checkout process.", "checkout.php");
+    exit();
+}
+
+// Check if the user has skipped to insert a payment method.
+// This check may seem redundant because $_SESSION['order_id']
+// should only be set if the previous step (process_payment_method.php)
+// finished successfully. However, it's a good safety measure to
+// ensure the order has a valid payment method.
+if (!check_payment($_SESSION['order_id'])) {
+    Logger::getInstance()->warning(
+        '[CHECKOUT] Invalid Checkout Sequence: User attempted to insert shipping address without providing a valid payment method. Suspected malicious attempt.',
+        ['user_id' => $user_id]
+    );
+    redirect_with_error("error", "To continue, please insert a payment method and a billing address.", "checkout.php");
+    exit();
+}
+
+// Check if the user has skipped to insert a billing address.
+// This check may seem redundant because $_SESSION['order_id']
+// should only be set if the previous step (process_payment_method.php)
+// finished successfully. However, it's a good safety measure to
+// ensure the order has a valid billing address.
+if (!check_billing_address($_SESSION['order_id'])) {
+    Logger::getInstance()->warning(
+        '[CHECKOUT] Invalid Checkout Sequence: User attempted to insert shipping address without providing a valid billing address. Suspected malicious attempt.',
+        ['user_id' => $user_id]
+    );
+    redirect_with_error("error", "To continue, please insert a payment method and a billing address.", "checkout.php");
     exit();
 }
 
@@ -108,7 +150,7 @@ if (empty($cart)) {
         <p>Book Emporium is dedicated to providing a curated selection of high-quality books across various genres. We believe in the power of literature to inspire, educate, and entertain. Explore our collection and find your next favorite read!</p>
     </section>
     <footer>
-        <p>&copy; 2023 Book Emporium. All rights reserved.</p>
+        <p>&copy; <?php echo date("Y"); ?> Book Emporium. All rights reserved.</p>
     </footer>
 </body>
 </html>

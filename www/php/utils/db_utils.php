@@ -224,10 +224,10 @@ function get_cart($user_id) : array {
     try {
         $db = DBManager::get_instance();
         $query = "SELECT SC.`isbn` AS `isbn`, SC.`book_title` AS `title`,
-                        SC.`book_author` AS `author`, SC.`price` AS `price`,
-                        SC.`quantity` AS `quantity`, B.`image_url_S` AS `image`
-                        FROM `shopping_carts` AS SC INNER JOIN `books` AS B ON SC.`isbn` = B.`isbn`
-                        WHERE SC.`user_id` = ?";
+                    SC.`book_author` AS `author`, SC.`price` AS `price`,
+                    SC.`quantity` AS `quantity`, B.`image_url_S` AS `image`
+                    FROM `shopping_carts` AS SC INNER JOIN `books` AS B ON SC.`isbn` = B.`isbn`
+                    WHERE SC.`user_id` = ?";
         $cart = $db->exec_query("SELECT", $query, [$user_id], "i");
 
         $order = array();
@@ -250,10 +250,7 @@ function get_cart($user_id) : array {
     }
 }
 
-function insert_payment_method($user_id, $firstname, $lastname, 
-        $address, $city, $postal_code, $country, 
-        $card_number, $expiry_date, $cvv
-) : int {
+function insert_payment_method($user_id, $firstname, $lastname, $address, $city, $postal_code, $country, $card_number, $expiry_date, $cvv) : int {
     try {
         $db = DBManager::get_instance();
 
@@ -261,7 +258,8 @@ function insert_payment_method($user_id, $firstname, $lastname,
         $db->begin_transaction();
 
         // Check if the address already exists
-        $query = "SELECT `address_id` FROM `addresses` 
+        $query = "SELECT `address_id` 
+                  FROM `addresses` 
                   WHERE `address` = ? AND `city` = ? AND `postal_code` = ? AND `country` = ?";
         $existing_address = $db->exec_query("SELECT", $query, [$address, $city, $postal_code, $country], "ssss");
 
@@ -274,15 +272,35 @@ function insert_payment_method($user_id, $firstname, $lastname,
                       (`address`, `city`, `postal_code`, `country`) 
                       VALUES (?, ?, ?, ?)";
             $billing_address_id = $db->exec_query("INSERT", $query, [$address, $city, $postal_code, $country], "ssss");
+            Logger::getInstance()->info('[CHECKOUT] New address inserted', ['address_id' => $billing_address_id]);
         }
 
-        // Insert payment details
-        $query = "INSERT INTO `payments` " . 
-                    "(`card_number`, `expiry_date`, `cvv`, `first_name`, `last_name`) " .
-                    "VALUES (?, ?, ?, ?, ?)";
-        $payment_id = $db->exec_query("INSERT", $query, [
-            $card_number, $expiry_date, $cvv, $firstname, $lastname], 
-            "sssss");
+        // Check if the payment method already exists
+        $query = "SELECT `payment_id`
+                  FROM `payments`
+                  WHERE `card_number` = ? AND `expiry_date` = ? AND `cvv` = ? AND `first_name` = ? and `last_name` = ?";
+        $existing_payment = $db->exec_query(
+            "SELECT",    
+            $query, 
+            [$card_number, $expiry_date, $cvv, $firstname, $lastname],
+            "sssss"
+        );
+
+        if (!empty($exisisting_payment)) {
+            // Use the existing payment ID
+            $payment_id = $existing_payment[0]['payment_id'];
+        } else {
+            // Insert payment details
+            $query = "INSERT INTO `payments` " . 
+                     "(`card_number`, `expiry_date`, `cvv`, `first_name`, `last_name`) " .
+                     "VALUES (?, ?, ?, ?, ?)";
+            $payment_id = $db->exec_query(
+                "INSERT",
+                $query,
+                [$card_number, $expiry_date, $cvv, $firstname, $lastname], 
+                "sssss");
+                Logger::getInstance()->info('[CHECKOUT] New payment method inserted', ['payment_id' => $payment_id]);
+        }
 
         // Insert order
         $query = "INSERT INTO `orders` " . 
@@ -308,9 +326,54 @@ function insert_payment_method($user_id, $firstname, $lastname,
     }
 }
 
+function check_payment($order_id) : bool {
+    try {
+        $db = DBManager::get_instance();
+
+        $query = "SELECT p.payment_id FROM orders o RIGHT JOIN payments p ON o.payment_id = p.payment_id WHERE o.order_id = ?";
+        $result = $db->exec_query("SELECT", $query, [$order_id], "i");
+        
+        return !empty($result) && $result[0]['payment_id'] !== NULL;
+    } catch(Exception $e) {
+        Logger::getInstance()->error('[ERROR] Trace: check_payment()', ['message' => $e->getMessage()]);
+        return false;
+    }
+}
+
+function check_billing_address($order_id) : bool {
+    try {
+        $db = DBManager::get_instance();
+
+        $query = "SELECT a.address_id FROM orders o RIGHT JOIN addresses a ON o.billing_address_id = a.address_id WHERE o.order_id = ?";
+        $result = $db->exec_query("SELECT", $query, [$order_id], "i");
+        
+        return !empty($result) && $result[0]['address_id'] !== NULL;
+    } catch(Exception $e) {
+        Logger::getInstance()->error('[ERROR] Trace: check_billing_address()', ['message' => $e->getMessage()]);
+        return false;
+    }
+}
+
+function check_shipping_address($order_id) : bool {
+    try {
+        $db = DBManager::get_instance();
+
+        $query = "SELECT a.address_id FROM orders o RIGHT JOIN addresses a ON o.shipping_address_id = a.address_id WHERE o.order_id = ?";
+        $result = $db->exec_query("SELECT", $query, [$order_id], "i");
+        
+        return !empty($result) && $result[0]['address_id'] !== NULL;
+    } catch(Exception $e) {
+        Logger::getInstance()->error('[ERROR] Trace: check_shipping_address()', ['message' => $e->getMessage()]);
+        return false;
+    }
+}
+
 function insert_shipping_address($order_id, $address, $city, $postal_code, $country) {
     try {
         $db = DBManager::get_instance();
+
+        // Begin transaction
+        $db->begin_transaction();
 
         // Check if the address already exists
         $query = "SELECT `address_id` FROM `addresses` 
@@ -322,23 +385,13 @@ function insert_shipping_address($order_id, $address, $city, $postal_code, $coun
             $shipping_address_id = $existing_address[0]['address_id'];
             Logger::getInstance()->info('[CHECKOUT] Existing address found', ['address_id' => $shipping_address_id]);
         } else {
-            // Begin transaction
-            $db->begin_transaction();
-
             // Insert new shipping address
             $query = "INSERT INTO `addresses` 
                       (`address`, `city`, `postal_code`, `country`) 
                       VALUES (?, ?, ?, ?)";
             $shipping_address_id = $db->exec_query("INSERT", $query, [$address, $city, $postal_code, $country], "ssss");
-
-            // Commit transaction
-            $db->commit();
-
             Logger::getInstance()->info('[CHECKOUT] New address inserted', ['address_id' => $shipping_address_id]);
         }
-
-        // Begin transaction
-        $db->begin_transaction();
 
         // Update the order with the shipping address ID
         $query = "UPDATE `orders` SET `shipping_address_id` = ? WHERE `order_id` = ?";
@@ -459,12 +512,11 @@ function update_order_status($order_id, $status, $total_price = null) : bool {
         $db->begin_transaction();
 
         // Prepare the update query
-        if ($total_price !== null) {
+        if ($total_price !== null || $total_price <= 0) {
             $query = "UPDATE `orders` SET `status_id` = ?, `total_price` = ? WHERE `order_id` = ?";
             $db->exec_query("UPDATE", $query, [$status, $total_price, $order_id], "idi");
         } else {
-            $query = "UPDATE `orders` SET `status_id` = ? WHERE `order_id` = ?";
-            $db->exec_query("UPDATE", $query, [$status, $order_id], "ii");
+            throw new Exception("total price is not valid (value: " . $total_price . ")");
         }
 
         // Commit transaction
