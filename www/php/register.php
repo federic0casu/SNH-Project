@@ -73,15 +73,8 @@ if(count($query_rows) > 0){
 $query = "SELECT * FROM `users` WHERE `username` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
 if(count($query_rows) > 0){
-    $logger->warning('[REGISTER] Username already taken.', ['username' => $_POST["username"]]);
-    $message  = "<p>We wanted to inform you that the username <strong>{$_POST["username"]}</strong> ";
-    $message .= "you attempted to register has already been taken by another user.</p>";
-    $message .= "<p>We apologize for any inconvenience this may have caused and appreciate ";
-    $message .= "your understanding.</p>";
-    $message .= "<p>Thank you for your interest in joining <strong>BookEmporium</strong>!</p>";
-    send_alert_mail($_POST["email"], $message);
-    //Returns a non-informative message
-    redirect_with_error("login", "A verification email has been sent to your email address.");
+    $logger->warning('[REGISTER] Username already taken (?username enumeration?).', ['username' => $_POST["username"]]);
+    redirect_with_error("register", "Username already taken.");
 }
 
 //Send verification mail

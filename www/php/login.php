@@ -32,18 +32,6 @@ $is_timed_out = count($query_rows) >= $lockout_threshold;
 //Check if the password is correct
 $is_password_correct = password_verify($_POST["password"], $user["password"]);
 
-////////////////////////////////////////////////// [START] TO REVIEW /////////////////////////////////////////////////
-//Check if the user is registered
-//if(!$is_registered) {
-//    $logger->warning('[LOGIN] Username does not exist.', ['username' => $_POST["username"]]);
-//    redirect_with_error("login", "Invalid username or password.");
-//}
-//Check if the user is timed-out
-//if($is_timed_out){
-//    $logger->warning('[LOGIN] Too many recently failed login attempts.', ['username' => $_POST["username"]]);
-//    redirect_with_error("login", "Too many recently failed login attempts. Retry after a while.");
-//}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // To prevent information leakage leading to username enumeration, the application should never indicate that any
 // specific account has been suspended. Rather, it should respond to any series of failed logins, even those using
 // an invalid username, with a generic message advising that accounts are suspended if multiple failures occur and
@@ -52,7 +40,7 @@ $is_password_correct = password_verify($_POST["password"], $user["password"]);
 // to brute-forcing because they continue to fully process login attempts during the suspension period, and they return
 // a subtly (or not so subtly) different message when valid credentials are submitted. This behavior enables an
 // effective brute-force attack to proceed at full speed regardless of the suspension policy.
-//
+
 //Check if the user is timed-out
 if($is_timed_out){
     
@@ -83,8 +71,6 @@ if(!$is_registered) {
     $logger->warning('[LOGIN] Username does not exist.', ['username' => $_POST["username"]]);
     redirect_with_error("login", "Invalid username or password. Multiple unsuccessful attempts may temporarily restrict access for security reasons.");
 }
-//[END] TO REVIEW
-
 
 //Check the password
 if(!$is_password_correct){
