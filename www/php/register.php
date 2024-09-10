@@ -38,20 +38,43 @@ $db = DBManager::get_instance();
 //Get Logger instance 
 $logger = Logger::getInstance();
 
-//Check if the username is already taken
-$query = "SELECT * FROM `users` WHERE `username` = ?";
-$query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
-if(count($query_rows) > 0){
-    $logger->warning('[REGISTER] Username already taken.', ['username' => $_POST["username"]]);
-    redirect_with_error("register", "Username already taken");
-}
+//Self-registration functionality can allow an attacker to perform user
+//enumeration. Indeed, the attacker can try to register a new user with
+//a certain name, and if registration fails then she learns that such a
+//username already exists. To avoid user-enumeration, the application 
+//returns a non-informative message like “a confirmation email has been
+//sent to your email address”. Then, if the user DOES not exists, the
+//application sends a confirmation email to the specified email address
+//containing a random unpredictable URL. When the user follows this URL,
+//the self-registration is complete. Otherwise, if the user already exists,
+//the user is notified with an email about this attempt.
 
-//Check if the username is already taken
+//Check if the email is already in use
 $query = "SELECT * FROM `users` WHERE `email` = ?";
 $query_rows = $db->exec_query("SELECT", $query, [$_POST["email"]], "s");
 if(count($query_rows) > 0){
     $logger->warning('[REGISTER] e-mail already in use.', ['username' => $_POST["username"], 'email' => $_POST["email"]]);
-    redirect_with_error("register", "Email already in use");
+    $message  = "<p>We wanted to inform you that an attempt was recently made to register a new account ";
+    $message .= "on our platform using your email address ({$_POST["email"]}).</p>";
+    $message .= "<p>If this was you, no further action is needed, and you can safely ignore this message.</p>";
+    $message .= "<p>However, if you did not initiate this registration, we recommend the following actions:</p>";
+    $message .= "<ul>";
+    $message .= "<li>Ensure that your existing accounts with us and other platforms are secure by changing your passwords.</li>";
+    $message .= "<li>Be cautious of any suspicious emails or phishing attempts related to your account security.</li>";
+    $message .= "<li>If you have any concerns or need assistance, please contact our support team immediately.</li>";
+    $message .= "</ul>";
+    $message .= "<p>Thank you for your attention to this matter.</p>";
+    send_alert_mail($_POST["email"], $message);
+    //Returns a non-informative message
+    redirect_with_error("login", "A verification email has been sent to your email address.");
+}
+
+//Check if the username is already taken
+$query = "SELECT * FROM `users` WHERE `username` = ?";
+$query_rows = $db->exec_query("SELECT", $query, [$_POST["username"]], "s");
+if(count($query_rows) > 0){
+    $logger->warning('[REGISTER] Username already taken (?username enumeration?).', ['username' => $_POST["username"]]);
+    redirect_with_error("register", "Username already taken.");
 }
 
 //Send verification mail
@@ -67,6 +90,6 @@ $query_result = $db->exec_query("INSERT", $query, [$_POST["username"],$_POST["fi
                                                    0,$verification_token], "sssssis");
 
 //At this point the registration is done, redirect to the login
-redirect_to_page("login");
+redirect_with_error("login", "A verification email has been sent to your email address.");
 
 ?>

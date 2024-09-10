@@ -67,6 +67,26 @@ function get_email_from_user_id(int $user_id): string {
     }
 }
 
+function get_email_from_username(string $username): string {
+    try {
+        $db = DBManager::get_instance();
+
+        // Query to fetch email
+        $query = "SELECT email FROM users WHERE username = ?";
+        $result = $db->exec_query("SELECT", $query, [$username], "s");
+
+        // Check if result is not empty and contains 'email'
+        if (isset($result[0]['email'])) {
+            return $result[0]['email'];
+        } else {
+            throw new Exception('No email found for the given username.');
+        }
+    } catch (Exception $e) {
+        Logger::getInstance()->error('[ERROR] Trace: get_email_from_username()', ['message' => $e->getMessage()]);
+        return "";
+    }
+}
+
 function get_full_name_from_user_id(int $user_id): string {
     try {
         $db = DBManager::get_instance();
@@ -410,7 +430,7 @@ function insert_shipping_address($order_id, $address, $city, $postal_code, $coun
         $db->rollback();
 
         Logger::getInstance()->error('[ERROR] Trace: insert_shipping_address()', ['message' => $e->getMessage(), 'order_id' => $order_id]);
-        return -1;
+        redirect_with_error("error", "Something went wrong while processing your shipping address. Please try again later.");
     }
 }
 
