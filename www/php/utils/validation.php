@@ -87,7 +87,7 @@ function check_password_strength(string $pass, array $user_data) : string{
     $zxcvbn = new Zxcvbn();
     $strength = $zxcvbn->passwordStrength($pass, $user_data);
     //If password is weak, return the issue feedback
-    if($strength["score"] <= 2){
+    if($strength["score"] <= 3){
         return $strength['feedback']['warning'];
     }
     //Password is sufficiently strong

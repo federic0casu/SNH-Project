@@ -105,8 +105,19 @@ if ($anonymous_user_id < 0) {
     //   -> we don't have to update the anonymous id (setting it to the newly 
     //      created id) in the shopping cart table 
 
-    //Save the cookie
-    setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true, true);
+    // Save the cookie using the options array (PHP 7.3+)
+    setcookie(
+        "user_login",
+        $session_token,
+        [
+            'expires' => time()+7*24*3600,  // Expiration time (expires in 7 days)
+            'path' => '/',                  // Path
+            'domain' => '',                 // Domain (optional)
+            'secure' => true,               // Secure flag
+            'httponly' => true,             // HttpOnly flag
+            'samesite' => 'Lax'             // SameSite flag
+        ]
+    );
 
     //Redirect to home
     redirect_to_index();
@@ -116,8 +127,19 @@ if ($anonymous_user_id < 0) {
 //Expire current anonymous session
 expire_anonymous_session_by_token($_COOKIE['anonymous_user']);
 
-//Save the cookie
-setcookie("user_login", $session_token, time() + 7 * 24 * 60 * 60, "/", "", true, true);
+// Save the cookie using the options array (PHP 7.3+)
+setcookie(
+    "user_login",
+    $session_token,
+    [
+        'expires' => time()+7*24*3600,  // Expiration time (expires in 7 days)
+        'path' => '/',                  // Path
+        'domain' => '',                 // Domain (optional)
+        'secure' => true,               // Secure flag
+        'httponly' => true,             // HttpOnly flag
+        'samesite' => 'Lax'             // SameSite flag
+    ]
+);
 
 //Update user_id in shopping_cart table
 $query = "UPDATE `shopping_carts` SET `user_id` = ? WHERE `user_id` = ?";
