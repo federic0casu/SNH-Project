@@ -139,7 +139,19 @@ function logout_by_token($session_token) : void {
         $db->exec_query("DELETE", $query, [$session_token], "s");
 
         //Remove cookie and expire php session if it was used
-        setcookie("user_login", "", time() - 3600, "/", "", true, true);
+        // Save the cookie using the options array (PHP 7.3+)
+        setcookie(
+            "anonymous_user", // Name
+            $session_token,   // Value
+            [
+                'expires' => time() - 3600, // Expiration time (expired 1 hour ago)
+                'path' => '/',              // Path
+                'domain' => '',             // Domain (optional)
+                'secure' => true,           // Secure flag
+                'httponly' => true,         // HttpOnly flag
+                'samesite' => 'Lax'         // SameSite flag
+            ]
+        );
         session_unset();
         session_destroy();
 
@@ -200,14 +212,25 @@ function create_anonymous_session() : int {
                 "(?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))";
         $query_result = $db->exec_query("INSERT", $query, [$session_id, $session_token], "is");
 
-        // Commit transaction
-        $db->commit();
-
-        //Save the cookie
-        if (!setcookie("anonymous_user", $session_token, time() + 60 * 60, "/", "", true, true)) {
+        // Save the cookie using the options array (PHP 7.3+)
+        $ok = setcookie(
+            "anonymous_user", // Name
+            $session_token,   // Value
+            [
+                'expires' => time() + 3600, // Expiration time
+                'path' => '/',              // Path
+                'domain' => '',             // Domain (optional)
+                'secure' => true,           // Secure flag
+                'httponly' => true,         // HttpOnly flag
+                'samesite' => 'Lax'         // SameSite flag
+            ]
+        );
+        if (!$ok) {
             throw new Exception('setcookie() failed');
         }
 
+        // Commit transaction
+        $db->commit();
         return $session_id;
     } catch (Exception $e) {
         // Rollback transaction on error
@@ -245,7 +268,20 @@ function expire_anonymous_session_by_token($session_token) : void {
 
         if (isset($_COOKIE['anonymous_user'])) {
             //Remove cookie and expire php anonymous session if it was used
-            if (!setcookie("anonymous_user", "", time() - 3600, "/", "", true, true)) {
+            // Save the cookie using the options array (PHP 7.3+)
+            $ok = setcookie(
+                "anonymous_user", // Name
+                $session_token,   // Value
+                [
+                    'expires' => time() - 3600, // Expiration time (expired 1 hour ago)
+                    'path' => '/',              // Path
+                    'domain' => '',             // Domain (optional)
+                    'secure' => true,           // Secure flag
+                    'httponly' => true,         // HttpOnly flag
+                    'samesite' => 'Lax'         // SameSite flag
+                ]
+            );
+            if (!$ok) {
                 throw new Exception('setcookie() failed');
             }
         }

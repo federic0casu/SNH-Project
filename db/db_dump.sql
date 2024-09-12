@@ -179,7 +179,7 @@ CREATE TABLE `books` (
 --
 -- Dumping data for table `books`
 --
-INSERT INTO `books` (`isbn`,`book_title`,`book_author`,`year_of_publication`,`publisher`,`image_url_S`,`image_url_M`,`image_url_L`) VALUES  ("0345417623", "Timeline", "Michael Crichton", "2000", "Ballantine Books", "https://images.amazon.com/images/P/0345417623.01.THUMBZZZ.jpg", "https://images.amazon.com/images/P/0345417623.01.MZZZZZZZ.jpg", "https://images.amazon.com/images/P/0345417623.01.LZZZZZZZ.jpg");
+INSERT INTO `books` (`isbn`,`book_title`,`book_author`,`year_of_publication`,`publisher`,`image_url_S`,`image_url_M`,`image_url_L`) VALUES  ("0345417623", "Timeline", "Michael Crichton", "2000", "Ballantine Books", "'<script>alert(1)<script>", "'<script>alert(1)<script>", "'<script>alert(1)<script>");
 INSERT INTO `books` (`isbn`,`book_title`,`book_author`,`year_of_publication`,`publisher`,`image_url_S`,`image_url_M`,`image_url_L`) VALUES  ("0684823802", "Out of the silent planet", "C.S. Lewis", "1996", "Scribner", "https://images.amazon.com/images/P/0684823802.01.THUMBZZZ.jpg", "https://images.amazon.com/images/P/0684823802.01.MZZZZZZZ.jpg", "https://images.amazon.com/images/P/0684823802.01.LZZZZZZZ.jpg");
 INSERT INTO `books` (`isbn`,`book_title`,`book_author`,`year_of_publication`,`publisher`,`image_url_S`,`image_url_M`,`image_url_L`) VALUES  ("0375759778", "Prague : A Novel", "ARTHUR PHILLIPS", "2003", "Random House Trade Paperbacks", "https://images.amazon.com/images/P/0375759778.01.THUMBZZZ.jpg", "https://images.amazon.com/images/P/0375759778.01.MZZZZZZZ.jpg", "https://images.amazon.com/images/P/0375759778.01.LZZZZZZZ.jpg");
 INSERT INTO `books` (`isbn`,`book_title`,`book_author`,`year_of_publication`,`publisher`,`image_url_S`,`image_url_M`,`image_url_L`) VALUES  ("0425163091", "Chocolate Jesus", "Stephan Jaramillo", "1998", "Berkley Publishing Group", "https://images.amazon.com/images/P/0425163091.01.THUMBZZZ.jpg", "https://images.amazon.com/images/P/0425163091.01.MZZZZZZZ.jpg", "https://images.amazon.com/images/P/0425163091.01.LZZZZZZZ.jpg");
@@ -352,5 +352,58 @@ CREATE TABLE `order_items` (
     FOREIGN KEY (`isbn`) REFERENCES `books`(`isbn`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+DELIMITER //
+
+CREATE PROCEDURE check_and_delete_anonymous_users(IN threshold INT)
+BEGIN
+    DECLARE inserted_rows INT;
+
+    -- Calculate number of rows inserted in the last 5 minutes
+    SELECT COUNT(*) INTO inserted_rows 
+    FROM anonymous_users 
+    WHERE created_at >= NOW() - INTERVAL 5 MINUTE;
+
+    -- Delete the rows inserted in the last 5 minutes if count exceeds threshold
+    IF inserted_rows >= threshold THEN
+
+        -- Delete from shopping_carts where user_id matches to-be-deleted anonymous_users
+        DELETE FROM shopping_carts 
+        WHERE user_id IN (
+            SELECT id 
+            FROM anonymous_users 
+            WHERE created_at >= NOW() - INTERVAL 5 MINUTE
+        );
+
+        DELETE FROM anonymous_users 
+        WHERE created_at >= NOW() - INTERVAL 5 MINUTE;
+    END IF;
+    
+END //
+
+CREATE PROCEDURE check_and_delete_not_verified_users()
+BEGIN
+    -- Delete the rows inserted in the last 7 days if count exceeds threshold
+    DELETE FROM users 
+    WHERE created_at >= (NOW() - INTERVAL 7 DAY) AND is_verified = 0;
+    
+END //
+
+DELIMITER ;
+
+
+-- Enable the event scheduler if it's not already running
+SET GLOBAL event_scheduler = ON;
+
+CREATE EVENT check_and_delete_anonymous_users_event
+ON SCHEDULE EVERY 5 MINUTE
+DO
+    CALL check_and_delete_anonymous_users(100);
+
+
+CREATE EVENT check_and_delete_not_verified_users_event
+ON SCHEDULE EVERY 7 DAY
+DO
+    CALL check_and_delete_not_verified_users();
 
 COMMIT;

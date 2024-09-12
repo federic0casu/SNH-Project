@@ -67,11 +67,11 @@ if ($user_id < 0) {
         
         <?php foreach ($books as $book): ?>
             <div class="book">
-                <img src="<?php echo $book['image_url_L']; ?>" alt="<?php echo $book['book_title']; ?>">
-                <h3><?php echo $book['book_title']; ?></h3>
-                <p>Author: <?php echo $book['book_author']; ?></p>
+                <img src="<?php echo htmlspecialchars($book['image_url_L'], ENT_QUOTES, 'UTF-8');?>" alt="<?php echo htmlspecialchars($book['book_title'], ENT_QUOTES, 'UTF-8');?>">
+                <h3><?php echo htmlspecialchars($book['book_title'], ENT_QUOTES, 'UTF-8');?></h3>
+                <p>Author: <?php echo htmlspecialchars($book['book_author'], ENT_QUOTES, 'UTF-8');?></p>
                 <form action="php/update_cart.php" method="post">
-                    <input type="hidden" name="isbn" value="<?php echo urlencode($book['isbn']); ?>">
+                    <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($book['isbn'], ENT_QUOTES, 'UTF-8');?>">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
                     <input type="hidden" name="action" value="1">
                     <input type="submit" value="Add to Cart">

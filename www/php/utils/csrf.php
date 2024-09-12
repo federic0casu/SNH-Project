@@ -1,6 +1,13 @@
 <?php
+session_set_cookie_params([
+    'path' => '/',
+    'domain' => '',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
-session_start();
+if(session_id() === "") session_start();
 
 // Generate and set a new CSRF token.
 function generate_csrf_token(){
