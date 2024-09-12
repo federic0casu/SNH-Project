@@ -31,6 +31,9 @@ $pass_strength_warning = check_password_strength($_POST["password"], $_POST);
 if(!empty($pass_strength_warning)){
     redirect_with_error("register", $pass_strength_warning);
 }
+if($_POST["username"] === $_POST["password"]){
+    redirect_with_error("register", "Do not use the username as password");
+}
 
 //Get DB instance
 $db = DBManager::get_instance();

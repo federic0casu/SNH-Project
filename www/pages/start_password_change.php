@@ -1,9 +1,12 @@
+<?php
+include '../php/utils/config_and_import.php';
+?>
 <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Password Reset</title>
+        <title>Change Password</title>
         <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/register.css">
     </head>
@@ -15,27 +18,24 @@
             </div>
         </header>
         <div class="container">
-            <h2>Set New Password</h2>
+            <h2>Change password</h2>
             <div class="error-message" id="error-message" style="display:none;">
                 An error was encountered.
             </div>
             <br>
-            <form action="../php/password_reset.php" method="post">
-                <input type="hidden" id="reset_token" name="reset_token" value="">
-                <label for="password">New Password:</label><br>
-                <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required><br><br>
+            <form action="../php/start_password_change.php" method="post">
+                
+                <label for="password">Current Password:</label><br>
+                <input type="password" id="password" name="password" autocomplete="current-password" minlength="8" required><br><br>
 
-                <label for="confirm_password">Confirm New Password:</label><br>
-                <input type="password" id="confirm_password" name="confirm_password" minlength="8" required><br><br>
+                <input type="hidden" name="csrf_token" value="<?php echo generate_or_get_csrf_token(); ?>">
 
-                <input type="submit" value="Set new password">
+                <input type="submit" value="Change Password">
             </form>
         </div>
         <script>
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
-            const resetToken = urlParams.get('reset_token')
-            document.getElementById('reset_token').value = resetToken;
             const error = urlParams.get('error');
             if (error != undefined) {
                 document.getElementById('error-message').style.display = 'block';
