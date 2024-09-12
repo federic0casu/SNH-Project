@@ -15,20 +15,20 @@
             </div>
         </header>
         <div class="container">
-            <h2>Password Reset</h2>
+            <h2>Set New Password</h2>
             <div class="error-message" id="error-message" style="display:none;">
                 An error was encountered.
             </div>
             <br>
             <form action="../php/password_reset.php" method="post">
                 <input type="hidden" id="reset_token" name="reset_token" value="">
-                <label for="password">Password:</label><br>
+                <label for="password">New Password:</label><br>
                 <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required><br><br>
 
-                <label for="confirm_password">Confirm Password:</label><br>
+                <label for="confirm_password">Confirm New Password:</label><br>
                 <input type="password" id="confirm_password" name="confirm_password" minlength="8" required><br><br>
 
-                <input type="submit" value="Reset">
+                <input type="submit" value="Set new password">
             </form>
         </div>
         <script>
