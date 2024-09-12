@@ -26,6 +26,16 @@ if(!verify_and_regenerate_csrf_token($_POST["csrf_token"])){
     redirect_to_index();
 }
 
+//Check if the password is correct
+$password_hash = get_password_from_user_id($user_id);
+$is_password_correct = password_verify($_POST["password"], $password_hash);
+if(!$is_password_correct){
+    $logger->warning('[PASSWORD_CHANGE] Password is not correct.', ['user_id' => $user_id]);
+
+    //Redirect user
+    redirect_with_error("start_password_change", "Invalid password");
+}
+
 //Set a reset token for the user
 $reset_token = bin2hex(random_bytes(32));
 $query = "UPDATE `users` SET `reset_token` = ?, `reset_valid_until` = DATE_ADD(NOW(), INTERVAL 30 MINUTE) WHERE `id` = ?";
