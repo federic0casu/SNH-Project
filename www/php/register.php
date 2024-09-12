@@ -27,7 +27,7 @@ if($_POST["password"] !== $_POST["confirm_password"]){
 }
 
 //Check password strength
-$pass_strength_warning = check_password_strength($_POST["password"], array_values($_POST));
+$pass_strength_warning = check_password_strength($_POST["password"], $_POST);
 if(!empty($pass_strength_warning)){
     redirect_with_error("register", $pass_strength_warning);
 }
