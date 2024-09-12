@@ -353,4 +353,57 @@ CREATE TABLE `order_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+DELIMITER //
+
+CREATE PROCEDURE check_and_delete_anonymous_users(IN threshold INT)
+BEGIN
+    DECLARE inserted_rows INT;
+
+    -- Calculate number of rows inserted in the last 5 minutes
+    SELECT COUNT(*) INTO inserted_rows 
+    FROM anonymous_users 
+    WHERE created_at >= NOW() - INTERVAL 5 MINUTE;
+
+    -- Delete the rows inserted in the last 5 minutes if count exceeds threshold
+    IF inserted_rows >= threshold THEN
+
+        -- Delete from shopping_carts where user_id matches to-be-deleted anonymous_users
+        DELETE FROM shopping_carts 
+        WHERE user_id IN (
+            SELECT id 
+            FROM anonymous_users 
+            WHERE created_at >= NOW() - INTERVAL 5 MINUTE
+        );
+
+        DELETE FROM anonymous_users 
+        WHERE created_at >= NOW() - INTERVAL 5 MINUTE;
+    END IF;
+    
+END //
+
+CREATE PROCEDURE check_and_delete_not_verified_users()
+BEGIN
+    -- Delete the rows inserted in the last 7 days if count exceeds threshold
+    DELETE FROM users 
+    WHERE created_at >= (NOW() - INTERVAL 7 DAY) AND is_verified = 0;
+    
+END //
+
+DELIMITER ;
+
+
+-- Enable the event scheduler if it's not already running
+SET GLOBAL event_scheduler = ON;
+
+CREATE EVENT check_and_delete_anonymous_users_event
+ON SCHEDULE EVERY 5 MINUTE
+DO
+    CALL check_and_delete_anonymous_users(100);
+
+
+CREATE EVENT check_and_delete_not_verified_users_event
+ON SCHEDULE EVERY 7 DAY
+DO
+    CALL check_and_delete_not_verified_users();
+
 COMMIT;
