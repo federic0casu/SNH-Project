@@ -14,6 +14,9 @@ RUN a2enmod rewrite
 # To enable SSL protocol (needed to use https)
 RUN a2enmod ssl
 
+# To enable headers setting for the whole site
+RUN a2enmod headers
+
 # Install and enable PHP extensions
 RUN docker-php-ext-install mysqli pdo_mysql
 RUN docker-php-ext-enable mysqli pdo_mysql
@@ -21,8 +24,10 @@ RUN docker-php-ext-enable mysqli pdo_mysql
 # Copy SSL certificate, key files, and Apache conf
 COPY docker/apache-conf/localhost.pem /etc/ssl/certs/certificate.crt
 COPY docker/apache-conf/localhost-key.pem /etc/ssl/private/server.key
+COPY docker/apache-conf/ssl-params.conf /etc/apache2/conf-available/ssl-params.conf
 COPY docker/apache-conf/bookshop.conf /etc/apache2/sites-available/bookshop.conf
 
+RUN a2enconf ssl-params.conf
 RUN a2ensite bookshop.conf
 
 # Restart Apache to apply changes
