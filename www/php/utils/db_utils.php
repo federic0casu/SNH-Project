@@ -87,6 +87,26 @@ function get_email_from_username(string $username): string {
     }
 }
 
+function get_username_from_user_id(int $user_id): string {
+    try {
+        $db = DBManager::get_instance();
+
+        // Query to fetch email
+        $query = "SELECT username FROM users WHERE id = ?";
+        $result = $db->exec_query("SELECT", $query, [$user_id], "i");
+
+        // Check if result is not empty and contains 'username'
+        if (isset($result[0]['username'])) {
+            return $result[0]['username'];
+        } else {
+            throw new Exception('No username found for the given user ID.');
+        }
+    } catch (Exception $e) {
+        Logger::getInstance()->error('[ERROR] Trace: get_username_from_user_id()', ['message' => $e->getMessage()]);
+        return "";
+    }
+}
+
 function get_password_from_user_id(int $user_id): string {
     try {
         $db = DBManager::get_instance();
