@@ -111,6 +111,7 @@ function updateResults(response) {
                 row.className = "row";
             }
         });
+        result.appendChild(row);
     } else {
         // If no books were found, display a message
         const message = document.createElement("p");
