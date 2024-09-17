@@ -36,7 +36,9 @@ function updateResults(response) {
     const result = document.getElementById("result-section");
     result.innerHTML = "";
 
+    console.log("Got books: ")
     if (response.length > 0) {
+        console.log(response)
         const h2 = document.createElement("h2");
         h2.textContent = "Results";
         result.appendChild(h2);
@@ -111,6 +113,7 @@ function updateResults(response) {
                 row.className = "row";
             }
         });
+        result.appendChild(row);
     } else {
         // If no books were found, display a message
         const message = document.createElement("p");
